@@ -25,15 +25,18 @@ gridWidth, gridHeight :: Int
 gridWidth = 10
 gridHeight = 20
 
+grey = makeColor 0.5 0.5 0.5 1.0
+
 drawingFunction :: Picture
 drawingFunction = translate (-50) 50 $ color red $ circle 80
 
-linePicture :: [Point] -> Picture
-linePicture points = color red (line points)
+grid :: [[Point]] -> [Picture]
+grid [] = [] 
+grid ([p1, p2] : xs) = color grey (line [p1, p2]) : grid xs
 
 main :: IO ()
 main =
   display
     (InWindow "Tetris" (wWidth, wHeight) (50, 50))
     black
-    (translate (-halfWW) (-halfWH) (linePicture [(0, 0), (100, 100)]))
+    (translate (-halfWW) (-halfWH) (pictures $ grid [[(0,0),(0,600)],[(30,0),(30,600)]]))
