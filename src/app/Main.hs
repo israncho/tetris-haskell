@@ -29,15 +29,28 @@ gridHeight = 20
 grey :: Color
 grey = makeColor 0.5 0.5 0.5 1.0
 
--- | Given the lists of points returns the picture to draw the grid.
+-- | Display of the tetris.
+tetrisDisplay :: Display
+tetrisDisplay = InWindow "Tetris" (wWidth + 1, wHeight + 1) (200, 200)
+
+-- | Given the lists of points returns the pictures to draw the grid.
 drawGrid :: [[Point]] -> [Picture]
 drawGrid = foldr ((:) . color grey . line) []
 
-grid = drawGrid (vLines ++ hLines)
+-- | Grid picture 
+grid :: Picture
+grid = pictures $ drawGrid (vLines ++ hLines)
+
+-- | Function to draw a square in the board.
+square :: (Float, Float) -> Color -> Picture
+square (x, y) color_ = translate (x + 15) (y + 15) $ color color_ (rectangleSolid 30 30)
+
+drawBoard :: Picture
+drawBoard = translate (-halfWW) (-halfWH) (pictures [square (30, 30) red, grid])
 
 main :: IO ()
 main =
   display
-    (InWindow "Tetris" (wWidth+1, wHeight+1) (50, 50))
+    tetrisDisplay
     black
-    (translate (-halfWW) (-halfWH ) (pictures grid))
+    drawBoard
