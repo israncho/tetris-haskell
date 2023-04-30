@@ -1,6 +1,7 @@
 module Board where
 
 import Graphics.Gloss
+import Tetromino
 
 -- | Lists of points to draw the grid of the board.
 basePoints, ceilPoints, leftPoints, rightPoints :: [(Int, Int)]
@@ -42,3 +43,7 @@ boardSquare (x, y) color
   | x < 0 || x > 9 = error "Square out of board"
   | y < 0 || y > 19 = error "Square out of board"
   | otherwise = square (fromIntegral x * 30, fromIntegral y * 30) color
+
+-- | Returns the image of the tetromino to be drawn on the board.
+drawTetromino :: Tetromino -> Picture
+drawTetromino t = pictures (map (\position -> boardSquare position (tcolor t)) (cells t))
