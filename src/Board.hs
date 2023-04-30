@@ -14,7 +14,7 @@ myZipp :: [(Int, Int)] -> [(Int, Int)] -> [[(Float, Float)]]
 myZipp [] _ = []
 myZipp ((a, b) : xs) ((c, d) : ys) = map tcast [(a, b), (c, d)] : myZipp xs ys
   where
-    tcast (x, y) = (fromIntegral x :: Float, fromIntegral y :: Float)
+    tcast (x, y) = (fromIntegral x, fromIntegral y)
 
 -- | Lists of paths to draw the grid.
 hLines, vLines :: [[(Float, Float)]]
@@ -32,6 +32,13 @@ drawGrid = foldr ((:) . color grey . line) []
 grid :: Picture
 grid = pictures $ drawGrid (vLines ++ hLines)
 
--- | Function to draw a square in the board.
+-- | Function to draw a square in the display.
 square :: (Float, Float) -> Color -> Picture
-square (x, y) color_ = translate (x + 15) (y + 15) $ color color_ (rectangleSolid 30 30)
+square (x, y) squcolr = translate (x + 15) (y + 15) $ color squcolr (rectangleSolid 30 30)
+
+-- | Function to draw a square in the board given the cell position.
+boardSquare :: (Int, Int) -> Color -> Picture
+boardSquare (x, y) color
+  | x < 0 || x > 9 = error "Square out of board"
+  | y < 0 || y > 19 = error "Square out of board"
+  | otherwise = square (fromIntegral x * 30, fromIntegral y * 30) color

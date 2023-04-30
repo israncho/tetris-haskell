@@ -19,7 +19,7 @@ tetrisDisplay :: Display
 tetrisDisplay = InWindow "Tetris" (wWidth + 1, wHeight + 1) (200, 200)
 
 drawBoard :: () -> IO Picture
-drawBoard _ = return (translate (-halfWW) (-halfWH) (pictures [square (30, 30) red, grid]))
+drawBoard _ = return (translate (-halfWW) (-halfWH) (pictures [boardSquare (4, 19) red, grid]))
 
 handleEvents :: Event -> () -> IO ()
 handleEvents _ _ = return ()
