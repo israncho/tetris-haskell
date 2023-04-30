@@ -1,6 +1,6 @@
 module Main where
 
-import Board
+import Drawing 
 import Graphics.Gloss
 import Graphics.Gloss.Interface.IO.Game (Event (EventKey), Key (Char, SpecialKey), SpecialKey (KeyEsc), playIO)
 import System.Exit (exitSuccess)

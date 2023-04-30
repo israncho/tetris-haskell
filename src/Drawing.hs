@@ -1,4 +1,4 @@
-module Board where
+module Drawing where
 
 import Graphics.Gloss
 import Tetromino
