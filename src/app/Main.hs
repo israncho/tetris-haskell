@@ -2,7 +2,11 @@ module Main where
 
 import Board
 import Graphics.Gloss
-import Graphics.Gloss.Interface.IO.Game (Event, playIO)
+import Graphics.Gloss.Interface.IO.Game (Event (EventKey), Key (Char, SpecialKey), SpecialKey (KeyEsc), playIO)
+import System.Exit (exitSuccess)
+import Tetromino (Tetromino)
+
+data Game = Game {finished :: Bool, currTetro :: Tetromino}
 
 -- | Constants for the display
 wWidth, wHeight :: Int
@@ -22,6 +26,8 @@ drawBoard :: () -> IO Picture
 drawBoard _ = return (translate (-halfWW) (-halfWH) (pictures [boardSquare (4, 19) red, grid]))
 
 handleEvents :: Event -> () -> IO ()
+handleEvents (EventKey (Char 'q') _ _ _) _ = exitSuccess
+handleEvents (EventKey (SpecialKey KeyEsc) _ _ _) _ = exitSuccess
 handleEvents _ _ = return ()
 
 updateGame :: Float -> () -> IO ()
