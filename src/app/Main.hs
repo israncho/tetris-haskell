@@ -1,10 +1,17 @@
 module Main where
 
-import Drawing 
+import Drawing
 import Graphics.Gloss
+  ( Display (InWindow),
+    Picture,
+    black,
+    pictures,
+    red,
+    translate,
+  )
 import Graphics.Gloss.Interface.IO.Game (Event (EventKey), Key (Char, SpecialKey), SpecialKey (KeyEsc), playIO)
 import System.Exit (exitSuccess)
-import Tetromino (Name (I), Tetromino, newTetromino)
+import Tetromino (Name (I, O, T, J, L, S, Z), Tetromino, newTetromino)
 
 data Game = Game {finished :: Bool, currTetro :: Tetromino}
 
@@ -23,7 +30,7 @@ tetrisDisplay :: Display
 tetrisDisplay = InWindow "Tetris" (wWidth + 1, wHeight + 1) (200, 200)
 
 drawBoard :: () -> IO Picture
-drawBoard _ = return (translate (-halfWW) (-halfWH) (pictures [drawTetromino (newTetromino I red), grid]))
+drawBoard _ = return (translate (-halfWW) (-halfWH) (pictures [drawTetromino (newTetromino Z), grid]))
 
 handleEvents :: Event -> () -> IO ()
 handleEvents (EventKey (Char 'q') _ _ _) _ = exitSuccess
