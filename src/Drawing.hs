@@ -5,10 +5,10 @@ import Tetromino
 
 -- | Lists of points to draw the grid of the board.
 basePoints, ceilPoints, leftPoints, rightPoints :: [(Int, Int)]
-basePoints = [(x * 30, 0) | x <- [0 .. 10], x * 30 `mod` 30 == 0]
-ceilPoints = [(x * 30, 600) | x <- [0 .. 10], x * 30 `mod` 30 == 0]
-leftPoints = [(0, x * 30) | x <- [0 .. 20], x * 30 `mod` 30 == 0]
-rightPoints = [(300, x * 30) | x <- [0 .. 20], x * 30 `mod` 30 == 0]
+basePoints = [(x * 20, 0) | x <- [0 .. 10]]
+ceilPoints = [(x * 20, 400) | x <- [0 .. 10]]
+leftPoints = [(0, x * 20) | x <- [0 .. 20]]
+rightPoints = [(200, x * 20) | x <- [0 .. 20]]
 
 -- | Take two lists of points and returns a list of paths.
 myZipp :: [(Int, Int)] -> [(Int, Int)] -> [[(Float, Float)]]
@@ -35,14 +35,14 @@ grid = pictures $ drawGrid (vLines ++ hLines)
 
 -- | Function to draw a square in the display.
 square :: (Float, Float) -> Color -> Picture
-square (x, y) squcolr = translate (x + 15) (y + 15) $ color squcolr (rectangleSolid 30 30)
+square (x, y) squcolr = translate (x + 10) (y + 10) $ color squcolr (rectangleSolid 20 20)
 
 -- | Function to draw a square in the board given the cell position.
 boardSquare :: (Int, Int) -> Color -> Picture
 boardSquare (x, y) color
   | x < 0 || x > 9 = error "Square out of board"
   | y < 0 || y > 19 = error "Square out of board"
-  | otherwise = square (fromIntegral x * 30, fromIntegral y * 30) color
+  | otherwise = square (fromIntegral x * 20, fromIntegral y * 20) color
 
 -- | Returns the image of the tetromino to be drawn on the board.
 drawTetromino :: Tetromino -> Picture

@@ -17,8 +17,8 @@ data Game = Game {finished :: Bool, currTetro :: Tetromino}
 
 -- | Constants for the display
 wWidth, wHeight :: Int
-wWidth = 300
-wHeight = 600
+wWidth = 200
+wHeight = 400
 
 -- | Constants for the display
 halfWW, halfWH :: Float
@@ -30,7 +30,7 @@ tetrisDisplay :: Display
 tetrisDisplay = InWindow "Tetris" (wWidth + 1, wHeight + 1) (200, 200)
 
 drawBoard :: () -> IO Picture
-drawBoard _ = return (translate (-halfWW) (-halfWH) (pictures [drawTetromino (newTetromino Z), grid]))
+drawBoard _ = return (translate (-halfWW) (-halfWH) (pictures [drawTetromino (newTetromino I), grid]))
 
 handleEvents :: Event -> () -> IO ()
 handleEvents (EventKey (Char 'q') _ _ _) _ = exitSuccess
