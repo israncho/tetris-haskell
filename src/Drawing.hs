@@ -19,18 +19,16 @@ cellSF = fromIntegral cellSize
 halfCSF = cellSF / 2
 
 -- | Lists of points to draw the grid of the board.
-basePoints, ceilPoints, leftPoints, rightPoints :: [(Int, Int)]
-basePoints = [(x * cellSize, 0) | x <- [0 .. 10]]
-ceilPoints = [(x * cellSize, wHeight) | x <- [0 .. 10]]
-leftPoints = [(0, x * cellSize) | x <- [0 .. 20]]
-rightPoints = [(wWidth, x * cellSize) | x <- [0 .. 20]]
+basePoints, ceilPoints, leftPoints, rightPoints :: [(Float, Float)]
+basePoints = [(x * cellSF, 0) | x <- [0 .. 10]]
+ceilPoints = [(x * cellSF, fromIntegral wHeight) | x <- [0 .. 10]]
+leftPoints = [(0, x * cellSF) | x <- [0 .. 20]]
+rightPoints = [(fromIntegral wWidth, x * cellSF) | x <- [0 .. 20]]
 
 -- | Take two lists of points and returns a list of paths.
-myZipp :: [(Int, Int)] -> [(Int, Int)] -> [[(Float, Float)]]
+myZipp :: [(Float, Float)] -> [(Float, Float)] -> [[(Float, Float)]]
 myZipp [] _ = []
-myZipp ((a, b) : xs) ((c, d) : ys) = map tcast [(a, b), (c, d)] : myZipp xs ys
-  where
-    tcast (x, y) = (fromIntegral x, fromIntegral y)
+myZipp ((a, b) : xs) ((c, d) : ys) =  [(a, b), (c, d)] : myZipp xs ys
 
 -- | Lists of paths to draw the grid.
 hLines, vLines :: [[(Float, Float)]]
