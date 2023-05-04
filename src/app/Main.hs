@@ -15,15 +15,6 @@ import Tetromino (Name (I, O, T, J, L, S, Z), Tetromino, newTetromino)
 
 data Game = Game {finished :: Bool, currTetro :: Tetromino}
 
--- | Constants for the display
-wWidth, wHeight :: Int
-wWidth = 200
-wHeight = 400
-
--- | Constants for the display
-halfWW, halfWH :: Float
-halfWW = fromIntegral wWidth / 2
-halfWH = fromIntegral wHeight / 2
 
 -- | Display of the tetris.
 tetrisDisplay :: Display
