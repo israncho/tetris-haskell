@@ -28,7 +28,7 @@ rightPoints = [(fromIntegral wWidth, x * cellSF) | x <- [0 .. 20]]
 -- | Take two lists of points and returns a list of paths.
 myZipp :: [(Float, Float)] -> [(Float, Float)] -> [[(Float, Float)]]
 myZipp [] _ = []
-myZipp ((a, b) : xs) ((c, d) : ys) =  [(a, b), (c, d)] : myZipp xs ys
+myZipp ((a, b) : xs) ((c, d) : ys) = [(a, b), (c, d)] : myZipp xs ys
 
 -- | Lists of paths to draw the grid.
 hLines, vLines :: [[(Float, Float)]]
@@ -50,13 +50,20 @@ grid = pictures $ drawGrid (vLines ++ hLines)
 square :: (Float, Float) -> Color -> Picture
 square (x, y) squcolr = translate (x + halfCSF) (y + halfCSF) $ color squcolr (rectangleSolid cellSF cellSF)
 
--- | Function to draw a square in the board given the cell position.
-boardSquare :: (Int, Int) -> Color -> Picture
-boardSquare (x, y) color
+-- | Function to draw a square in the board given the cell position, color and way to draw.
+boardSquare :: ((Float, Float) -> Color -> Picture) -> (Int, Int) -> Color -> Picture
+boardSquare drawingFunction (x, y) color
   | x < 0 || x > 9 = error "Square out of board"
   | y < 0 || y > 19 = error "Square out of board"
-  | otherwise = square (fromIntegral x * cellSF, fromIntegral y * cellSF) color
+  | otherwise = drawingFunction (fromIntegral x * cellSF, fromIntegral y * cellSF) color
 
 -- | Returns the image of the tetromino to be drawn on the board.
-drawTetromino :: Tetromino -> Picture
-drawTetromino t = pictures $ map (\position -> boardSquare position (tcolor t)) (cells t)
+-- Second parameter for the type of the tetromino.
+drawTetromino :: Tetromino -> Bool -> Picture
+drawTetromino t isGhost = pictures $ map (\position -> boardSquare drawingFunction position (tcolor t)) (cells t)
+  where 
+    drawingFunction = if isGhost then squareWire else square
+
+-- | Function to draw the perimeter of a square in the display.
+squareWire :: (Float, Float) -> Color -> Picture
+squareWire (x, y) squcolr = translate (x + halfCSF) (y + halfCSF) $ color squcolr (rectangleWire (cellSF - 2) (cellSF - 2))

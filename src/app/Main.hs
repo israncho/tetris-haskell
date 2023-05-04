@@ -21,7 +21,7 @@ tetrisDisplay :: Display
 tetrisDisplay = InWindow "Tetris" (wWidth + 1, wHeight + 1) (200, 200)
 
 drawBoard :: () -> IO Picture
-drawBoard _ = return (translate (-halfWW) (-halfWH) (pictures [drawTetromino (newTetromino I), grid]))
+drawBoard _ = return (translate (-halfWW) (-halfWH) (pictures [drawTetromino (newTetromino Z) False, grid]))
 
 handleEvents :: Event -> () -> IO ()
 handleEvents (EventKey (Char 'q') _ _ _) _ = exitSuccess
