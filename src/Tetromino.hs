@@ -35,6 +35,21 @@ moveDown (x, y) = (x, y - 1)
 moveLeft (x, y) = (x - 1, y)
 moveRight (x, y) = (x + 1, y)
 
--- | Fuction to move a tetromino by one cell.
+-- | Fuction to move all the cells of the tetromino by one.
 move :: (Position -> Position) -> Tetromino -> Tetromino
 move movingFunct tetromino = tetromino {cells = map movingFunct (cells tetromino)}
+
+-- | Returns true if the given tetromino can move in the given direction within the board.
+canMove :: (Position -> Position) -> Tetromino -> Board -> Bool
+canMove movingFunct tetro board = allInBounds && not collision
+  where
+    movedTetro = move movingFunct tetro
+    allInBounds = foldr ((&&) . inBounds) True (cells movedTetro)
+    boardPositions = map position board
+    collision = foldr ((||) . (`elem` boardPositions)) False (cells movedTetro)
+
+-- | Returns a moved tetromino if it's possible to move.
+moveTetromino :: (Position -> Position) -> Tetromino -> Board -> Tetromino 
+moveTetromino movingFun tetro board 
+  | canMove movingFun tetro board = move movingFun tetro
+  | otherwise = tetro
