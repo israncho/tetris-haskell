@@ -29,12 +29,6 @@ newTetromino L = Tetromino L orange [(3, 19), (4, 19), (5, 19), (3, 18)]
 newTetromino S = Tetromino S green [(4, 18), (5, 18), (5, 19), (6, 19)]
 newTetromino Z = Tetromino Z red [(4, 19), (5, 19), (5, 18), (6, 18)]
 
--- | Functions to move a position by one.
-moveDown, moveLeft, moveRight :: Position -> Position
-moveDown (x, y) = (x, y - 1)
-moveLeft (x, y) = (x - 1, y)
-moveRight (x, y) = (x + 1, y)
-
 -- | Fuction to move all the cells of the tetromino by one.
 move :: (Position -> Position) -> Tetromino -> Tetromino
 move movingFunct tetromino = tetromino {cells = map movingFunct (cells tetromino)}
@@ -49,7 +43,7 @@ canMove movingFunct tetro board = allInBounds && not collision
     collision = foldr ((||) . (`elem` boardPositions)) False (cells movedTetro)
 
 -- | Returns a moved tetromino if it's possible to move.
-moveTetromino :: (Position -> Position) -> Tetromino -> Board -> Tetromino 
-moveTetromino movingFun tetro board 
+moveTetromino :: (Position -> Position) -> Tetromino -> Board -> Tetromino
+moveTetromino movingFun tetro board
   | canMove movingFun tetro board = move movingFun tetro
   | otherwise = tetro
