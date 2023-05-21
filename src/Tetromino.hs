@@ -15,7 +15,7 @@ data Tetromino = Tetromino
     -- | The color of the tetromino
     tcolor :: Color,
     -- | The positions of the cells that make up the tetromino
-    cells :: [Position]
+    tcells :: [Position]
   }
   deriving (Eq, Show)
 
@@ -31,19 +31,22 @@ newTetromino Z = Tetromino Z red [(4, 19), (5, 19), (5, 18), (6, 18)]
 
 -- | Fuction to move all the cells of the tetromino by one.
 move :: (Position -> Position) -> Tetromino -> Tetromino
-move movingFunct tetromino = tetromino {cells = map movingFunct (cells tetromino)}
+move movingFunct tetromino = tetromino {tcells = map movingFunct (tcells tetromino)}
 
 -- | Returns true if the given tetromino can move in the given direction within the board.
 canMove :: (Position -> Position) -> Tetromino -> Board -> Bool
 canMove movingFunct tetro board = allInBounds && not collision
   where
     movedTetro = move movingFunct tetro
-    allInBounds = foldr ((&&) . inBounds) True (cells movedTetro)
+    allInBounds = foldr ((&&) . inBounds) True (tcells movedTetro)
     boardPositions = map position board
-    collision = foldr ((||) . (`elem` boardPositions)) False (cells movedTetro)
+    collision = foldr ((||) . (`elem` boardPositions)) False (tcells movedTetro)
 
 -- | Returns a moved tetromino if it's possible to move.
 moveTetromino :: (Position -> Position) -> Tetromino -> Board -> Tetromino
 moveTetromino movingFun tetro board
   | canMove movingFun tetro board = move movingFun tetro
   | otherwise = tetro
+
+getCells :: Tetromino -> [Cell]
+getCells tetro = map (\x -> Cell {position = x, cellColor = tcolor tetro}) $ tcells tetro

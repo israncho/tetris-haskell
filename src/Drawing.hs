@@ -60,7 +60,7 @@ boardSquare drawingFunction (x, y) color
 -- | Returns the image of the tetromino to be drawn on the board.
 -- Second parameter for the type of the tetromino.
 drawTetromino :: Tetromino -> Bool -> Picture
-drawTetromino t isGhost = pictures $ map (\position -> boardSquare drawingFunction position (tcolor t)) (cells t)
+drawTetromino t isGhost = pictures $ map (\position -> boardSquare drawingFunction position (tcolor t)) (tcells t)
   where 
     drawingFunction = if isGhost then squareWire else square
 
