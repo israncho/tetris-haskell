@@ -12,40 +12,53 @@ import Graphics.Gloss
   )
 import Graphics.Gloss.Interface.IO.Game (Event (EventKey), Key (Char, SpecialKey), KeyState (Down, Up), SpecialKey (KeyDown, KeyEsc, KeyLeft, KeyRight), playIO)
 import System.Exit (exitSuccess)
-import Tetromino (Name (I, J, L, O, S, T, Z), Tetromino, move, moveTetromino, newTetromino)
+import Tetromino (Name (I, J, L, O, S, T, Z), Tetromino, canMove, collision, getCells, move, moveTetromino, newTetromino)
 
 data Game = Game
   { -- | Boolean to know if the game has ended
     finished :: Bool,
     -- | Falling tetromino.
     fTetro :: Tetromino,
+    -- | Next tetrominos
+    nTetros :: [Tetromino],
     -- | Board of the game.
     board :: Board
   }
   deriving (Show, Eq)
 
-initialStateGame = Game {finished = False, fTetro = newTetromino Z, board = []}
+firstTetros = [newTetromino I, newTetromino O, newTetromino L]
+
+initialStateGame = Game {finished = False, fTetro = newTetromino Z, board = [], nTetros = firstTetros}
 
 -- | Display of the tetris.
 tetrisDisplay :: Display
 tetrisDisplay = InWindow "Tetris" (wWidth + 1, wHeight + 1) (200, 200)
 
-drawBoard :: Game -> IO Picture
-drawBoard gameState = return (translate (-halfWW) (-halfWH) (pictures [drawTetromino (fTetro gameState) False, grid]))
+drawGame :: Game -> IO Picture
+drawGame gameState =
+  return
+    ( translate
+        (-halfWW)
+        (-halfWH)
+        ( pictures
+            [drawTetromino (fTetro gameState) False, drawBoard $ board gameState, grid]
+        )
+    )
 
 handleEvents :: Event -> Game -> IO Game
 handleEvents (EventKey (Char 'q') _ _ _) _ = exitSuccess
-handleEvents (EventKey (SpecialKey KeyEsc) _ _ _) _ = exitSuccess
 handleEvents (EventKey (Char 'j') Down _ _) game = return game {fTetro = moveTetromino moveLeft (fTetro game) (board game)}
-handleEvents (EventKey (SpecialKey KeyLeft) Down _ _) game = return game {fTetro = moveTetromino moveLeft (fTetro game) (board game)}
 handleEvents (EventKey (Char 'k') Down _ _) game = return game {fTetro = moveTetromino moveRight (fTetro game) (board game)}
-handleEvents (EventKey (SpecialKey KeyRight) Down _ _) game = return game {fTetro = moveTetromino moveRight (fTetro game) (board game)}
 handleEvents (EventKey (Char 'm') Down _ _) game = return game {fTetro = moveTetromino moveDown (fTetro game) (board game)}
-handleEvents (EventKey (SpecialKey KeyDown) Down _ _) game = return game {fTetro = moveTetromino moveDown (fTetro game) (board game)}
 handleEvents _ gameState = return gameState
 
 updateGame :: Float -> Game -> IO Game
-updateGame _ game = return game {fTetro = moveTetromino moveDown (fTetro game) (board game)}
+updateGame _ game
+  | canMove moveDown (fTetro game) (board game) = return game {fTetro = moveTetromino moveDown (fTetro game) (board game)}
+  | not $ collision (head $ nTetros game) (board game) =
+      return
+        game {board = getCells (fTetro game) ++ board game, fTetro = head (nTetros game)}
+  | otherwise = exitSuccess
 
 main :: IO ()
-main = playIO tetrisDisplay black 1 initialStateGame drawBoard handleEvents updateGame
+main = playIO tetrisDisplay black 1 initialStateGame drawGame handleEvents updateGame
