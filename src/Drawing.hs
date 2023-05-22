@@ -1,5 +1,6 @@
 module Drawing where
 
+import Board (Board, Cell (cellColor, position))
 import Graphics.Gloss
 import Tetromino
 
@@ -13,9 +14,11 @@ cellSize = 20
 halfWW, halfWH, cellSF, halfCSF :: Float
 halfWW = fromIntegral wWidth / 2
 halfWH = fromIntegral wHeight / 2
--- | Cell size 
+
+-- | Cell size
 cellSF = fromIntegral cellSize
--- | Half cell size 
+
+-- | Half cell size
 halfCSF = cellSF / 2
 
 -- | Lists of points to draw the grid of the board.
@@ -61,9 +64,12 @@ boardSquare drawingFunction (x, y) color
 -- Second parameter for the type of the tetromino.
 drawTetromino :: Tetromino -> Bool -> Picture
 drawTetromino t isGhost = pictures $ map (\position -> boardSquare drawingFunction position (tcolor t)) (tcells t)
-  where 
+  where
     drawingFunction = if isGhost then squareWire else square
 
 -- | Function to draw the perimeter of a square in the display.
 squareWire :: (Float, Float) -> Color -> Picture
 squareWire (x, y) squcolr = translate (x + halfCSF) (y + halfCSF) $ color squcolr (rectangleWire (cellSF - 2) (cellSF - 2))
+
+drawBoard :: Board -> Picture
+drawBoard board = pictures $ map (\cell -> boardSquare square (position cell) (cellColor cell)) board
