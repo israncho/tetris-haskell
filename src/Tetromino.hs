@@ -3,10 +3,14 @@ module Tetromino where
 
 import Board
 import Graphics.Gloss
+import System.Random
 
 -- | Names for tetrominos
 data Name = I | O | T | J | L | S | Z
   deriving (Eq, Show)
+
+names :: [Name]
+names = [I, O, T, J, L, S, Z]
 
 -- | Type to represent tetrominos
 data Tetromino = Tetromino
@@ -33,14 +37,19 @@ newTetromino Z = Tetromino Z red [(4, 19), (5, 19), (5, 18), (6, 18)]
 move :: (Position -> Position) -> Tetromino -> Tetromino
 move movingFunct tetromino = tetromino {tcells = map movingFunct (tcells tetromino)}
 
+-- | Returns true if there is a collision on the board.
+-- This occurs when a tetromino shares a position with an already occupied cell on the board.
+collision :: Tetromino -> Board -> Bool
+collision tetro board = foldr ((||) . (`elem` boardPositions)) False (tcells tetro)
+  where
+    boardPositions = map position board
+
 -- | Returns true if the given tetromino can move in the given direction within the board.
 canMove :: (Position -> Position) -> Tetromino -> Board -> Bool
-canMove movingFunct tetro board = allInBounds && not collision
+canMove movingFunct tetro board = allInBounds && not (collision movedTetro board)
   where
     movedTetro = move movingFunct tetro
     allInBounds = foldr ((&&) . inBounds) True (tcells movedTetro)
-    boardPositions = map position board
-    collision = foldr ((||) . (`elem` boardPositions)) False (tcells movedTetro)
 
 -- | Returns a moved tetromino if it's possible to move.
 moveTetromino :: (Position -> Position) -> Tetromino -> Board -> Tetromino
@@ -48,5 +57,12 @@ moveTetromino movingFun tetro board
   | canMove movingFun tetro board = move movingFun tetro
   | otherwise = tetro
 
+-- | Returns the cells of the tetromino.
 getCells :: Tetromino -> [Cell]
 getCells tetro = map (\x -> Cell {position = x, cellColor = tcolor tetro}) $ tcells tetro
+
+-- | Returns a random tetromino in it's initial position.
+randomTetro :: IO Tetromino
+randomTetro = do
+  index <- randomRIO (0, 6)
+  return $ newTetromino (names !! index)
