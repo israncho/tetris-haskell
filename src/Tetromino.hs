@@ -57,6 +57,11 @@ moveTetromino movingFun tetro board
   | canMove movingFun tetro board = move movingFun tetro
   | otherwise = tetro
 
+moveAllTheWay :: (Position -> Position) -> Tetromino -> Board -> Tetromino
+moveAllTheWay movingFun tetro board
+  | not $ canMove movingFun tetro board = tetro
+  | otherwise = moveAllTheWay movingFun (move movingFun tetro) board
+
 -- | Returns the cells of the tetromino.
 getCells :: Tetromino -> [Cell]
 getCells tetro = map (\x -> Cell {position = x, cellColor = tcolor tetro}) $ tcells tetro

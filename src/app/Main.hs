@@ -10,9 +10,26 @@ import Graphics.Gloss
     red,
     translate,
   )
-import Graphics.Gloss.Interface.IO.Game (Event (EventKey), Key (Char, SpecialKey), KeyState (Down, Up), SpecialKey (KeyDown, KeyEsc, KeyLeft, KeyRight), playIO)
+import Graphics.Gloss.Interface.IO.Game
+  ( Event (EventKey),
+    Key (Char, SpecialKey),
+    KeyState (Down, Up),
+    SpecialKey (KeyDown, KeyEsc, KeyLeft, KeyRight),
+    playIO,
+  )
 import System.Exit (exitSuccess)
-import Tetromino (Name (I, J, L, O, S, T, Z), Tetromino, canMove, collision, getCells, move, moveTetromino, newTetromino, randomTetro)
+import Tetromino
+  ( Name (I, J, L, O, S, T, Z),
+    Tetromino,
+    canMove,
+    collision,
+    getCells,
+    move,
+    moveAllTheWay,
+    moveTetromino,
+    newTetromino,
+    randomTetro,
+  )
 
 data Game = Game
   { -- | Boolean to know if the game has ended
@@ -36,10 +53,13 @@ tetrisDisplay = InWindow "Tetris" (wWidth + 1, wHeight + 1) (200, 200)
 
 drawGame :: Game -> IO Picture
 drawGame gameState =
-  return (translate (-halfWW) (-halfWH) (pictures [boardpic, ftetropic, grid]))
+  return (translate (-halfWW) (-halfWH) (pictures [boardpic, ftetropic, ghostTetro, grid]))
   where
-    boardpic = drawBoard $ board gameState
-    ftetropic = drawTetromino (fTetro gameState) False
+    currBoard = board gameState
+    currTetro = fTetro gameState
+    boardpic = drawBoard currBoard
+    ftetropic = drawTetromino currTetro False
+    ghostTetro = drawTetromino (moveAllTheWay downMv currTetro currBoard) True
 
 handleEvents :: Event -> Game -> IO Game
 handleEvents (EventKey (Char 'q') _ _ _) _ = exitSuccess
