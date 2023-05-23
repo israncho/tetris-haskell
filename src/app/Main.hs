@@ -1,6 +1,6 @@
 module Main where
 
-import Board (Board, moveDown, moveLeft, moveRight)
+import Board (Board, downMv, leftMv, rightMv)
 import Drawing
 import Graphics.Gloss
   ( Display (InWindow),
@@ -43,14 +43,14 @@ drawGame gameState =
 
 handleEvents :: Event -> Game -> IO Game
 handleEvents (EventKey (Char 'q') _ _ _) _ = exitSuccess
-handleEvents (EventKey (Char 'j') Down _ _) game = return game {fTetro = moveTetromino moveLeft (fTetro game) (board game)}
-handleEvents (EventKey (Char 'k') Down _ _) game = return game {fTetro = moveTetromino moveRight (fTetro game) (board game)}
-handleEvents (EventKey (Char 'm') Down _ _) game = return game {fTetro = moveTetromino moveDown (fTetro game) (board game)}
+handleEvents (EventKey (Char 'j') Down _ _) game = return game {fTetro = moveTetromino leftMv (fTetro game) (board game)}
+handleEvents (EventKey (Char 'k') Down _ _) game = return game {fTetro = moveTetromino rightMv (fTetro game) (board game)}
+handleEvents (EventKey (Char 'm') Down _ _) game = return game {fTetro = moveTetromino downMv (fTetro game) (board game)}
 handleEvents _ gameState = return gameState
 
 updateGame :: Float -> Game -> IO Game
 updateGame _ game
-  | canMove moveDown currTetro currBoard = return game {fTetro = moveTetromino moveDown currTetro currBoard}
+  | canMove downMv currTetro currBoard = return game {fTetro = moveTetromino downMv currTetro currBoard}
   | not $ collision (last nextTetros) currBoard = do
       rndTetro <- randomTetro
       return

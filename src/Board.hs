@@ -19,7 +19,7 @@ inBounds (x, y)
   | otherwise = True
 
 -- | Functions to move a position by one.
-moveDown, moveLeft, moveRight :: Position -> Position
-moveDown (x, y) = (x, y - 1)
-moveLeft (x, y) = (x - 1, y)
-moveRight (x, y) = (x + 1, y)
+downMv, leftMv, rightMv :: Position -> Position
+downMv (x, y) = (x, y - 1)
+leftMv (x, y) = (x - 1, y)
+rightMv (x, y) = (x + 1, y)
