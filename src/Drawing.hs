@@ -69,7 +69,8 @@ drawTetromino t isGhost = pictures $ map (\position -> boardSquare drawingFuncti
 
 -- | Function to draw the perimeter of a square in the display.
 squareWire :: (Float, Float) -> Color -> Picture
-squareWire (x, y) squcolr = translate (x + halfCSF) (y + halfCSF) $ color squcolr (rectangleWire (cellSF - 2) (cellSF - 2))
+squareWire (x, y) squcolr = translate (x + halfCSF) (y + halfCSF) $ color squcolr (pictures 
+  [rectangleWire (cellSF - 2) (cellSF - 2), rectangleWire (cellSF - 4) (cellSF - 4)])
 
 drawBoard :: Board -> Picture
 drawBoard board = pictures $ map (\cell -> boardSquare square (position cell) (cellColor cell)) board
