@@ -36,14 +36,10 @@ tetrisDisplay = InWindow "Tetris" (wWidth + 1, wHeight + 1) (200, 200)
 
 drawGame :: Game -> IO Picture
 drawGame gameState =
-  return
-    ( translate
-        (-halfWW)
-        (-halfWH)
-        ( pictures
-            [drawTetromino (fTetro gameState) False, drawBoard $ board gameState, grid]
-        )
-    )
+  return (translate (-halfWW) (-halfWH) (pictures [boardpic, ftetropic, grid]))
+  where
+    boardpic = drawBoard $ board gameState
+    ftetropic = drawTetromino (fTetro gameState) False
 
 handleEvents :: Event -> Game -> IO Game
 handleEvents (EventKey (Char 'q') _ _ _) _ = exitSuccess
@@ -54,15 +50,16 @@ handleEvents _ gameState = return gameState
 
 updateGame :: Float -> Game -> IO Game
 updateGame _ game
-  | canMove moveDown (fTetro game) (board game) = return game {fTetro = moveTetromino moveDown (fTetro game) (board game)}
-  | not $ collision (last $ nTetros game) (board game) = do
+  | canMove moveDown currTetro currBoard = return game {fTetro = moveTetromino moveDown currTetro currBoard}
+  | not $ collision (last nextTetros) currBoard = do
       rndTetro <- randomTetro
-      return game
-          { board = getCells (fTetro game) ++ board game,
-            fTetro = last (nTetros game),
-            nTetros = rndTetro : init (nTetros game)
-          }
+      return
+        game {board = getCells currTetro ++ currBoard, fTetro = last nextTetros, nTetros = rndTetro : init nextTetros}
   | otherwise = exitSuccess
+  where
+    currTetro = fTetro game
+    currBoard = board game
+    nextTetros = nTetros game
 
 main :: IO ()
 main = playIO tetrisDisplay black 1 initialStateGame drawGame handleEvents updateGame
