@@ -12,7 +12,7 @@ import Graphics.Gloss
   )
 import Graphics.Gloss.Interface.IO.Game (Event (EventKey), Key (Char, SpecialKey), KeyState (Down, Up), SpecialKey (KeyDown, KeyEsc, KeyLeft, KeyRight), playIO)
 import System.Exit (exitSuccess)
-import Tetromino (Name (I, J, L, O, S, T, Z), Tetromino, canMove, collision, getCells, move, moveTetromino, newTetromino)
+import Tetromino (Name (I, J, L, O, S, T, Z), Tetromino, canMove, collision, getCells, move, moveTetromino, newTetromino, randomTetro)
 
 data Game = Game
   { -- | Boolean to know if the game has ended
@@ -55,9 +55,13 @@ handleEvents _ gameState = return gameState
 updateGame :: Float -> Game -> IO Game
 updateGame _ game
   | canMove moveDown (fTetro game) (board game) = return game {fTetro = moveTetromino moveDown (fTetro game) (board game)}
-  | not $ collision (head $ nTetros game) (board game) =
-      return
-        game {board = getCells (fTetro game) ++ board game, fTetro = head (nTetros game)}
+  | not $ collision (last $ nTetros game) (board game) = do
+      rndTetro <- randomTetro
+      return game
+          { board = getCells (fTetro game) ++ board game,
+            fTetro = last (nTetros game),
+            nTetros = rndTetro : init (nTetros game)
+          }
   | otherwise = exitSuccess
 
 main :: IO ()
