@@ -28,7 +28,7 @@ import Tetromino
     moveAllTheWay,
     moveTetromino,
     newTetromino,
-    randomTetro,
+    randomTetro, rotate,
   )
 
 data Game = Game
@@ -87,6 +87,7 @@ handleEvents (EventKey (SpecialKey KeyRight) Down _ _) game = performOneMove rig
 handleEvents (EventKey (SpecialKey KeyDown) Down _ _) game = performOneMove downMv game
 handleEvents (EventKey (SpecialKey KeySpace) Down _ _) game =
   lockAndSpawnTetromino game {fTetro = moveAllTheWay downMv (fTetro game) (board game)}
+handleEvents (EventKey (Char 'i') Down _ _) game = return game {fTetro = rotate (fTetro game)}
 handleEvents _ gameState = return gameState
 
 -- | Function to update the game and step the game one iteration.

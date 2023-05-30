@@ -23,3 +23,10 @@ downMv, leftMv, rightMv :: Position -> Position
 downMv (x, y) = (x, y - 1)
 leftMv (x, y) = (x - 1, y)
 rightMv (x, y) = (x + 1, y)
+
+-- | Function to rotate a position(point) around a pivot 90 degrees
+rotation :: Position -> Position -> Position
+rotation (x_ref, y_ref) (x, y) = (x'' + x_ref, y'' + y_ref)
+  where
+    (x', y') = (x - x_ref, y - y_ref)
+    (x'', y'') = (-y', x')
