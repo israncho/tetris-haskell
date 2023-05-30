@@ -72,5 +72,6 @@ squareWire :: (Float, Float) -> Color -> Picture
 squareWire (x, y) squcolr = translate (x + halfCSF) (y + halfCSF) $ color squcolr (pictures 
   [rectangleWire (cellSF - 2) (cellSF - 2), rectangleWire (cellSF - 4) (cellSF - 4)])
 
+-- | Function to draw the board in its current state. 
 drawBoard :: Board -> Picture
 drawBoard board = pictures $ map (\cell -> boardSquare square (position cell) (cellColor cell)) board

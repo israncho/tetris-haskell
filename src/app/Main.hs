@@ -51,6 +51,7 @@ initialStateGame = Game {finished = False, fTetro = newTetromino Z, board = [], 
 tetrisDisplay :: Display
 tetrisDisplay = InWindow "Tetris" (wWidth + 1, wHeight + 1) (200, 200)
 
+-- | Function to draw the entire game.
 drawGame :: Game -> IO Picture
 drawGame gameState =
   return (translate (-halfWW) (-halfWH) (pictures [boardpic, ftetropic, ghostTetro, grid]))
@@ -61,6 +62,7 @@ drawGame gameState =
     ftetropic = drawTetromino currTetro False
     ghostTetro = drawTetromino (moveAllTheWay downMv currTetro currBoard) True
 
+-- | Function to handle the inputs(events) of the user.
 handleEvents :: Event -> Game -> IO Game
 handleEvents (EventKey (Char 'q') _ _ _) _ = exitSuccess
 handleEvents (EventKey (Char 'j') Down _ _) game = return game {fTetro = moveTetromino leftMv (fTetro game) (board game)}
@@ -68,6 +70,7 @@ handleEvents (EventKey (Char 'k') Down _ _) game = return game {fTetro = moveTet
 handleEvents (EventKey (Char 'm') Down _ _) game = return game {fTetro = moveTetromino downMv (fTetro game) (board game)}
 handleEvents _ gameState = return gameState
 
+-- | Function to update the game and step the game one iteration. 
 updateGame :: Float -> Game -> IO Game
 updateGame _ game
   | canMove downMv currTetro currBoard = return game {fTetro = moveTetromino downMv currTetro currBoard}
@@ -81,5 +84,6 @@ updateGame _ game
     currBoard = board game
     nextTetros = nTetros game
 
+-- | The main entry point of the Tetris game. It initializes the game state and starts the game loop.
 main :: IO ()
 main = playIO tetrisDisplay black 1 initialStateGame drawGame handleEvents updateGame

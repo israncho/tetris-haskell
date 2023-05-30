@@ -57,6 +57,7 @@ moveTetromino movingFun tetro board
   | canMove movingFun tetro board = move movingFun tetro
   | otherwise = tetro
 
+-- | Function to move a tetromino all the way in a given direction.
 moveAllTheWay :: (Position -> Position) -> Tetromino -> Board -> Tetromino
 moveAllTheWay movingFun tetro board
   | not $ canMove movingFun tetro board = tetro
