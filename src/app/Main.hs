@@ -14,7 +14,7 @@ import Graphics.Gloss.Interface.IO.Game
   ( Event (EventKey),
     Key (Char, SpecialKey),
     KeyState (Down, Up),
-    SpecialKey (KeyDown, KeyEsc, KeyLeft, KeyRight),
+    SpecialKey (KeyDown, KeyEsc, KeyLeft, KeyRight, KeySpace),
     playIO,
   )
 import System.Exit (exitSuccess)
@@ -68,9 +68,11 @@ handleEvents (EventKey (Char 'q') _ _ _) _ = exitSuccess
 handleEvents (EventKey (Char 'j') Down _ _) game = return game {fTetro = moveTetromino leftMv (fTetro game) (board game)}
 handleEvents (EventKey (Char 'k') Down _ _) game = return game {fTetro = moveTetromino rightMv (fTetro game) (board game)}
 handleEvents (EventKey (Char 'm') Down _ _) game = return game {fTetro = moveTetromino downMv (fTetro game) (board game)}
+handleEvents (EventKey (SpecialKey KeySpace) Down _ _) game =
+  return game {fTetro = moveAllTheWay downMv (fTetro game) (board game)}
 handleEvents _ gameState = return gameState
 
--- | Function to update the game and step the game one iteration. 
+-- | Function to update the game and step the game one iteration.
 updateGame :: Float -> Game -> IO Game
 updateGame _ game
   | canMove downMv currTetro currBoard = return game {fTetro = moveTetromino downMv currTetro currBoard}
