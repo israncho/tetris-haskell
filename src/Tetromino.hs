@@ -82,4 +82,9 @@ rotate (Tetromino {name = T, tcells = [(x, y), (a, b), (c, d), (e, f)]})
   | x - 1 == e = Tetromino T rose [(x, y), (a + 1, b - 1), (c - 1, d + 1), (e + 1, f + 1)]
   | y + 1 == f = Tetromino T rose [(x, y), (a - 1, b - 1), (c + 1, d + 1), (e + 1, f - 1)]
   | x + 1 == e = Tetromino T rose [(x, y), (a - 1, b + 1), (c + 1, d - 1), (e - 1, f - 1)]
+rotate (Tetromino {name = J, tcells = [(a, b), (x, y), (c, d), (e, f)]})
+  | a + 1 == x = Tetromino J blue [(a + 1, b + 1), (x, y), (c - 1, d - 1), (e - 2, f)]
+  | b - 1 == y = Tetromino J blue [(a + 1, b - 1), (x, y), (c - 1, d + 1), (e, f + 2)]
+  | a - 1 == x = Tetromino J blue [(a - 1, b - 1), (x, y), (c + 1, d + 1), (e + 2, f)]
+  | b + 1 == y = Tetromino J blue [(a - 1, b + 1), (x, y), (c + 1, d - 1), (e, f - 2)] 
 rotate tetro = tetro
