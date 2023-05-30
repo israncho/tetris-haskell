@@ -27,7 +27,7 @@ data Tetromino = Tetromino
 newTetromino :: Name -> Tetromino
 newTetromino I = Tetromino I cyan [(3, 19), (4, 19), (5, 19), (6, 19)]
 newTetromino O = Tetromino O yellow [(4, 19), (4, 18), (5, 19), (5, 18)]
-newTetromino T = Tetromino T rose [(4, 19), (5, 19), (6, 19), (5, 18)]
+newTetromino T = Tetromino T rose [(5, 19), (4, 19), (6, 19), (5, 18)]
 newTetromino J = Tetromino J blue [(3, 19), (4, 19), (5, 19), (5, 18)]
 newTetromino L = Tetromino L orange [(3, 19), (4, 19), (5, 19), (3, 18)]
 newTetromino S = Tetromino S green [(4, 18), (5, 18), (5, 19), (6, 19)]
@@ -72,3 +72,14 @@ randomTetro :: IO Tetromino
 randomTetro = do
   index <- randomRIO (0, 6)
   return $ newTetromino (names !! index)
+
+rotate :: Tetromino -> Tetromino
+rotate (Tetromino {name = I, tcells = ((x, y) : xs)})
+  | y == snd (head xs) = Tetromino I cyan [(x + 1, y + 1), (x + 1, y), (x + 1, y - 1), (x + 1, y - 2)]
+  | otherwise = Tetromino I cyan [(x - 1, y - 1), (x, y - 1), (x + 1, y - 1), (x + 2, y - 1)]
+rotate (Tetromino {name = T, tcells = [(x, y), (a, b), (c, d), (e, f)]})
+  | y - 1 == f = Tetromino T rose [(x, y), (a + 1, b + 1), (c - 1, d - 1), (e - 1, f + 1)]
+  | x - 1 == e = Tetromino T rose [(x, y), (a + 1, b - 1), (c - 1, d + 1), (e + 1, f + 1)]
+  | y + 1 == f = Tetromino T rose [(x, y), (a - 1, b - 1), (c + 1, d + 1), (e + 1, f - 1)]
+  | x + 1 == e = Tetromino T rose [(x, y), (a - 1, b + 1), (c + 1, d - 1), (e - 1, f - 1)]
+rotate tetro = tetro
