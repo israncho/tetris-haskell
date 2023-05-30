@@ -80,8 +80,11 @@ lockAndSpawnTetromino game = do
 handleEvents :: Event -> Game -> IO Game
 handleEvents (EventKey (Char 'q') _ _ _) _ = exitSuccess
 handleEvents (EventKey (Char 'j') Down _ _) game = performOneMove leftMv game
-handleEvents (EventKey (Char 'k') Down _ _) game = performOneMove rightMv game
-handleEvents (EventKey (Char 'm') Down _ _) game = performOneMove downMv game
+handleEvents (EventKey (Char 'l') Down _ _) game = performOneMove rightMv game
+handleEvents (EventKey (Char 'k') Down _ _) game = performOneMove downMv game
+handleEvents (EventKey (SpecialKey KeyLeft) Down _ _) game = performOneMove leftMv game
+handleEvents (EventKey (SpecialKey KeyRight) Down _ _) game = performOneMove rightMv game
+handleEvents (EventKey (SpecialKey KeyDown) Down _ _) game = performOneMove downMv game
 handleEvents (EventKey (SpecialKey KeySpace) Down _ _) game =
   lockAndSpawnTetromino game {fTetro = moveAllTheWay downMv (fTetro game) (board game)}
 handleEvents _ gameState = return gameState
