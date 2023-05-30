@@ -28,7 +28,7 @@ newTetromino :: Name -> Tetromino
 newTetromino I = Tetromino I cyan [(3, 19), (4, 19), (5, 19), (6, 19)]
 newTetromino O = Tetromino O yellow [(4, 19), (4, 18), (5, 19), (5, 18)]
 newTetromino T = Tetromino T rose [(5, 19), (4, 19), (6, 19), (5, 18)]
-newTetromino J = Tetromino J blue [(5, 19), (4, 19), (6, 19), (5, 18)]
+newTetromino J = Tetromino J blue [(5, 19), (4, 19), (6, 19), (6, 18)]
 newTetromino L = Tetromino L orange [(4, 19), (3, 19), (5, 19), (3, 18)]
 newTetromino S = Tetromino S green [(5, 19), (4, 18), (5, 18), (6, 19)]
 newTetromino Z = Tetromino Z red [(5, 19), (4, 19), (5, 18), (6, 18)]
