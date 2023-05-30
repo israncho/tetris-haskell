@@ -76,10 +76,21 @@ randomTetro = do
   index <- randomRIO (0, 6)
   return $ newTetromino (names !! index)
 
--- | Function to rotate a tetromino.
-rotate :: Tetromino -> Tetromino
-rotate (Tetromino {name = O, tcells = ocells}) = Tetromino O yellow ocells
-rotate tetro = tetro {tcells = rotatedcells}
+-- | Function to rotate all the cells of a tetromino around its center.
+rotateTCells :: Tetromino -> Tetromino
+rotateTCells (Tetromino {name = O, tcells = ocells}) = Tetromino O yellow ocells
+rotateTCells tetro = tetro {tcells = rotatedcells}
   where
     pivot = head $ tcells tetro
     rotatedcells = pivot : map (rotation pivot) (tail $ tcells tetro)
+
+-- | Returns true if the given tetro can rotate.
+canRotate :: Tetromino -> Board -> Bool
+canRotate tetro board = allInBounds rotatedTetro && not (collision rotatedTetro board)
+  where
+    rotatedTetro = rotateTCells tetro
+
+rotateTetro :: Tetromino -> Board -> Tetromino
+rotateTetro tetro board 
+  | canRotate tetro board = rotateTCells tetro
+  | otherwise = tetro
