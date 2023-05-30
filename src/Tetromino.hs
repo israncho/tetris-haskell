@@ -44,12 +44,15 @@ collision tetro board = foldr ((||) . (`elem` boardPositions)) False (tcells tet
   where
     boardPositions = map position board
 
+-- | Returns true if all the cells of the tetromino are in bounds.
+allInBounds :: Tetromino -> Bool
+allInBounds tetro = foldr ((&&) . inBounds) True (tcells tetro)
+
 -- | Returns true if the given tetromino can move in the given direction within the board.
 canMove :: (Position -> Position) -> Tetromino -> Board -> Bool
-canMove movingFunct tetro board = allInBounds && not (collision movedTetro board)
+canMove movingFunct tetro board = allInBounds movedTetro && not (collision movedTetro board)
   where
     movedTetro = move movingFunct tetro
-    allInBounds = foldr ((&&) . inBounds) True (tcells movedTetro)
 
 -- | Returns a moved tetromino if it's possible to move.
 moveTetromino :: (Position -> Position) -> Tetromino -> Board -> Tetromino
