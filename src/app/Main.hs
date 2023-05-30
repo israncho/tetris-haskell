@@ -1,6 +1,6 @@
 module Main where
 
-import Board (Board, downMv, leftMv, rightMv)
+import Board (Board, Position, downMv, leftMv, rightMv)
 import Drawing
 import Graphics.Gloss
   ( Display (InWindow),
@@ -62,24 +62,35 @@ drawGame gameState =
     ftetropic = drawTetromino currTetro False
     ghostTetro = drawTetromino (moveAllTheWay downMv currTetro currBoard) True
 
+-- | Function to make the falling tetromino move.
+performOneMove :: (Position -> Position) -> Game -> IO Game
+performOneMove direction game = return game {fTetro = moveTetromino direction (fTetro game) (board game)}
+
+-- | Locks the current tetromino and spawns another one.
+lockAndSpawnTetromino :: Game -> IO Game
+lockAndSpawnTetromino game = do
+  rndTetro <- randomTetro
+  return game {board = getCells currTetro ++ currBoard, fTetro = last nextTetros, nTetros = rndTetro : init nextTetros}
+  where
+    currTetro = fTetro game
+    currBoard = board game
+    nextTetros = nTetros game
+
 -- | Function to handle the inputs(events) of the user.
 handleEvents :: Event -> Game -> IO Game
 handleEvents (EventKey (Char 'q') _ _ _) _ = exitSuccess
-handleEvents (EventKey (Char 'j') Down _ _) game = return game {fTetro = moveTetromino leftMv (fTetro game) (board game)}
-handleEvents (EventKey (Char 'k') Down _ _) game = return game {fTetro = moveTetromino rightMv (fTetro game) (board game)}
-handleEvents (EventKey (Char 'm') Down _ _) game = return game {fTetro = moveTetromino downMv (fTetro game) (board game)}
+handleEvents (EventKey (Char 'j') Down _ _) game = performOneMove leftMv game
+handleEvents (EventKey (Char 'k') Down _ _) game = performOneMove rightMv game
+handleEvents (EventKey (Char 'm') Down _ _) game = performOneMove downMv game
 handleEvents (EventKey (SpecialKey KeySpace) Down _ _) game =
-  return game {fTetro = moveAllTheWay downMv (fTetro game) (board game)}
+  lockAndSpawnTetromino game {fTetro = moveAllTheWay downMv (fTetro game) (board game)}
 handleEvents _ gameState = return gameState
 
 -- | Function to update the game and step the game one iteration.
 updateGame :: Float -> Game -> IO Game
 updateGame _ game
   | canMove downMv currTetro currBoard = return game {fTetro = moveTetromino downMv currTetro currBoard}
-  | not $ collision (last nextTetros) currBoard = do
-      rndTetro <- randomTetro
-      return
-        game {board = getCells currTetro ++ currBoard, fTetro = last nextTetros, nTetros = rndTetro : init nextTetros}
+  | not $ collision (last nextTetros) currBoard = lockAndSpawnTetromino game
   | otherwise = exitSuccess
   where
     currTetro = fTetro game
