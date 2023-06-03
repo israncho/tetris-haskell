@@ -30,3 +30,7 @@ rotation (x_ref, y_ref) (x, y) = (x'' + x_ref, y'' + y_ref)
   where
     (x', y') = (x - x_ref, y - y_ref)
     (x'', y'') = (-y', x')
+
+getRow :: Board -> Int -> [Cell]
+getRow board row = filter (\cell -> snd (position cell) == row) board
+
