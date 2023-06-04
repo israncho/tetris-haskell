@@ -1,6 +1,6 @@
 module Main where
 
-import Board (Board, Position, completeRows, downMv, highestCompleteRow, leftMv, rightMv)
+import Board (Board, Position, clearOneRow, completeRows, downMv, highestCompleteRow, leftMv, rightMv)
 import Drawing
 import Graphics.Gloss
   ( Display (InWindow),
@@ -77,6 +77,14 @@ lockAndSpawnTetromino game = do
     currBoard = board game
     nextTetros = nTetros game
 
+clearRows :: Game -> Game
+clearRows game = if null cRows then game else game {board = clearOneRow numRow hCRow currBoard}
+  where
+    currBoard = board game
+    cRows = completeRows currBoard
+    numRow = last cRows
+    hCRow = highestCompleteRow currBoard
+
 -- | Function to handle the inputs(events) of the user.
 handleEvents :: Event -> Game -> IO Game
 handleEvents (EventKey (Char 'q') _ _ _) game = do
@@ -89,8 +97,9 @@ handleEvents (EventKey (Char 'k') Down _ _) game = performOneMove downMv game
 handleEvents (EventKey (SpecialKey KeyLeft) Down _ _) game = performOneMove leftMv game
 handleEvents (EventKey (SpecialKey KeyRight) Down _ _) game = performOneMove rightMv game
 handleEvents (EventKey (SpecialKey KeyDown) Down _ _) game = performOneMove downMv game
-handleEvents (EventKey (SpecialKey KeySpace) Down _ _) game =
-  lockAndSpawnTetromino game {fTetro = moveAllTheWay downMv (fTetro game) (board game)}
+handleEvents (EventKey (SpecialKey KeySpace) Down _ _) game = do
+  currGame <- lockAndSpawnTetromino game {fTetro = moveAllTheWay downMv (fTetro game) (board game)}
+  return $ clearRows currGame
 handleEvents (EventKey (Char 'i') Down _ _) game = return game {fTetro = rotateTetro (fTetro game) (board game)}
 handleEvents _ gameState = return gameState
 
@@ -98,7 +107,9 @@ handleEvents _ gameState = return gameState
 updateGame :: Float -> Game -> IO Game
 updateGame _ game
   | canMove downMv currTetro currBoard = return game {fTetro = moveTetromino downMv currTetro currBoard}
-  | not $ collision (last nextTetros) currBoard = lockAndSpawnTetromino game
+  | not $ collision (last nextTetros) currBoard = do
+      currGame <- lockAndSpawnTetromino game
+      return $ clearRows currGame
   | otherwise = exitSuccess
   where
     currTetro = fTetro game

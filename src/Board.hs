@@ -39,9 +39,9 @@ row rowNum = filter (\cell -> snd (position cell) == rowNum)
 isComplete :: Int -> Board -> Bool
 isComplete x board = length (row x board) == 10
 
--- | Returns the number of complete rows in the given board.
-completeRows :: Board -> Int
-completeRows board = foldr (\row -> (+) (if row `isComplete` board then 1 else 0)) 0 [0 .. 19]
+-- | Returns the list with the row numbers of the complete rows
+completeRows :: Board -> [Int]
+completeRows board = foldr (\row list -> if row `isComplete` board then row : list else list) [] [0 .. 19]
 
 -- | Returns the highest complete row if there is any, in other case returns
 -- the empty list
@@ -53,3 +53,16 @@ highestCompleteRow board = foldr (\row list -> if null list then checkComplete r
 -- | Removes all the given cells from the board.
 removeFrom :: [Cell] -> Board -> Board
 removeFrom cellsTD = foldr (\cell list -> if cell `elem` cellsTD then list else cell : list) []
+
+clearOneRow :: Int -> [Cell] -> Board -> Board
+clearOneRow rowNum rowCells board = clearBoard
+  where
+    withoutRow = removeFrom rowCells board
+    clearBoard =
+      map
+        ( \cell ->
+            if snd (position cell) > rowNum
+              then cell {position = downMv (position cell)}
+              else cell
+        )
+        withoutRow
