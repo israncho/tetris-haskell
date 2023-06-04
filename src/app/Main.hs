@@ -1,6 +1,6 @@
 module Main where
 
-import Board (Board, Position, completeRows, downMv, leftMv, rightMv, getRow, highestCompleteRow)
+import Board (Board, Position, completeRows, downMv, highestCompleteRow, leftMv, rightMv)
 import Drawing
 import Graphics.Gloss
   ( Display (InWindow),
@@ -81,6 +81,7 @@ lockAndSpawnTetromino game = do
 handleEvents :: Event -> Game -> IO Game
 handleEvents (EventKey (Char 'q') _ _ _) game = do
   print (highestCompleteRow $ board game)
+  print (completeRows $ board game)
   exitSuccess
 handleEvents (EventKey (Char 'j') Down _ _) game = performOneMove leftMv game
 handleEvents (EventKey (Char 'l') Down _ _) game = performOneMove rightMv game
