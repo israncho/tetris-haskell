@@ -1,6 +1,6 @@
 module Main where
 
-import Board (Board, Position, downMv, leftMv, rightMv)
+import Board (Board, Position, completeRows, downMv, leftMv, rightMv, getRow, highestCompleteRow)
 import Drawing
 import Graphics.Gloss
   ( Display (InWindow),
@@ -46,7 +46,7 @@ data Game = Game
 
 firstTetros = [newTetromino I, newTetromino O, newTetromino L]
 
-initialStateGame = Game {finished = False, fTetro = newTetromino Z, board = [], nTetros = firstTetros}
+initialStateGame = Game {finished = False, fTetro = newTetromino I, board = [], nTetros = firstTetros}
 
 -- | Display of the tetris.
 tetrisDisplay :: Display
@@ -79,7 +79,9 @@ lockAndSpawnTetromino game = do
 
 -- | Function to handle the inputs(events) of the user.
 handleEvents :: Event -> Game -> IO Game
-handleEvents (EventKey (Char 'q') _ _ _) _ = exitSuccess
+handleEvents (EventKey (Char 'q') _ _ _) game = do
+  print (highestCompleteRow $ board game)
+  exitSuccess
 handleEvents (EventKey (Char 'j') Down _ _) game = performOneMove leftMv game
 handleEvents (EventKey (Char 'l') Down _ _) game = performOneMove rightMv game
 handleEvents (EventKey (Char 'k') Down _ _) game = performOneMove downMv game

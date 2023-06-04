@@ -31,6 +31,19 @@ rotation (x_ref, y_ref) (x, y) = (x'' + x_ref, y'' + y_ref)
     (x', y') = (x - x_ref, y - y_ref)
     (x'', y'') = (-y', x')
 
+-- | Returns the list of cells that make up the given row.
 getRow :: Board -> Int -> [Cell]
 getRow board row = filter (\cell -> snd (position cell) == row) board
 
+-- | Returns true if the given row is complete.
+isComplete :: Board -> Int -> Bool
+isComplete board row = length (getRow board row) == 10
+
+-- | Returns the number of complete rows in the given board.
+completeRows :: Board -> Int
+completeRows board = foldr (\row -> (+) (if isComplete board row then 1 else 0)) 0 [0 .. 19]
+
+highestCompleteRow :: Board -> [Cell]
+highestCompleteRow board = foldr (\row list -> if null list then checkComplete row else list) [] [0 .. 19]
+  where
+    checkComplete row = if isComplete board row then getRow board row else []
