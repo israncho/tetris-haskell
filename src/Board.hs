@@ -49,3 +49,7 @@ highestCompleteRow :: Board -> [Cell]
 highestCompleteRow board = foldr (\row list -> if null list then checkComplete row else list) [] [0 .. 19]
   where
     checkComplete x = if x `isComplete` board then row x board else []
+
+-- | Removes all the given cells from the board.
+removeFrom :: [Cell] -> Board -> Board
+removeFrom cellsTD = foldr (\cell list -> if cell `elem` cellsTD then list else cell : list) []
