@@ -32,18 +32,20 @@ rotation (x_ref, y_ref) (x, y) = (x'' + x_ref, y'' + y_ref)
     (x'', y'') = (-y', x')
 
 -- | Returns the list of cells that make up the given row.
-getRow :: Board -> Int -> [Cell]
-getRow board row = filter (\cell -> snd (position cell) == row) board
+row :: Int -> Board -> [Cell]
+row rowNum = filter (\cell -> snd (position cell) == rowNum)
 
--- | Returns true if the given row is complete.
-isComplete :: Board -> Int -> Bool
-isComplete board row = length (getRow board row) == 10
+-- | Given the row number, returns true if the row is complete.
+isComplete :: Int -> Board -> Bool
+isComplete x board = length (row x board) == 10
 
 -- | Returns the number of complete rows in the given board.
 completeRows :: Board -> Int
-completeRows board = foldr (\row -> (+) (if isComplete board row then 1 else 0)) 0 [0 .. 19]
+completeRows board = foldr (\row -> (+) (if row `isComplete` board then 1 else 0)) 0 [0 .. 19]
 
+-- | Returns the highest complete row if there is any, in other case returns
+-- the empty list
 highestCompleteRow :: Board -> [Cell]
 highestCompleteRow board = foldr (\row list -> if null list then checkComplete row else list) [] [0 .. 19]
   where
-    checkComplete row = if isComplete board row then getRow board row else []
+    checkComplete x = if x `isComplete` board then row x board else []
