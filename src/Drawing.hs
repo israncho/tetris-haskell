@@ -10,7 +10,7 @@ boardWidth = 300
 boardHeight = 600
 cellSize = 30
 wHeight = boardHeight
-wWidth = boardWidth + (cellSize * 6)
+wWidth = boardWidth + (cellSize * 8)
 
 -- | Constants for the display and drawing
 halfWW, halfWH, cellSF, halfCSF :: Float
@@ -94,4 +94,6 @@ drawBoard board = pictures $ boardBackground : map (\cell -> boardSquare square 
 
 -- | Function to draw the side panel of the game.
 drawSidePanel :: [Tetromino] -> Int -> Picture
-drawSidePanel _ = error "" 
+drawSidePanel (x : xs) _ = drawPanelTetro $ sidePanelTetro (name x) 
+  where
+    drawPanelTetro t = pictures $ map (\position -> squareOutsideBoard square position (tcolor t)) (tcells t)

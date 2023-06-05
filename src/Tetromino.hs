@@ -104,3 +104,12 @@ rotateTetro tetro board
     twoRight = move rightMv oneRight
     oneLeft = move leftMv tetro
     twoLeft = move leftMv oneLeft
+
+sidePanelTetro :: Name -> Tetromino
+sidePanelTetro I = Tetromino I cyan [(12, 2), (13, 2), (14, 2), (15, 2)]
+sidePanelTetro O = Tetromino O yellow [(13, 3), (13, 2), (14, 2), (14, 3)]
+sidePanelTetro T = Tetromino T rose [(13, 3), (14, 3), (15, 3), (14, 2)]
+sidePanelTetro J = Tetromino J (makeColor 0.2 0.2 0.9 1.0) [(13, 3), (14, 3), (15, 3), (15, 2)]
+sidePanelTetro L = Tetromino L orange [(13, 3), (14, 3), (15, 3), (13, 2)]
+sidePanelTetro S = Tetromino S green [(13, 2), (14, 2), (14, 3), (15, 3)]
+sidePanelTetro Z = Tetromino Z red [(13, 3), (14, 3), (14, 2), (15, 2)]
