@@ -14,7 +14,7 @@ import Graphics.Gloss.Interface.IO.Game
   ( Event (EventKey),
     Key (Char, SpecialKey),
     KeyState (Down, Up),
-    SpecialKey (KeyDown, KeyEsc, KeyLeft, KeyRight, KeySpace),
+    SpecialKey (KeyDown, KeyEsc, KeyLeft, KeyRight, KeySpace, KeyUp),
     playIO,
   )
 import System.Exit (exitSuccess)
@@ -96,6 +96,7 @@ handleEvents (EventKey (SpecialKey KeySpace) Down _ _) game = do
   currGame <- lockAndSpawnTetromino game {fTetro = moveAllTheWay downMv (fTetro game) (board game)}
   return $ clearRows currGame
 handleEvents (EventKey (Char 'i') Down _ _) game = return game {fTetro = rotateTetro (fTetro game) (board game)}
+handleEvents (EventKey (SpecialKey KeyUp) Down _ _) game = return game {fTetro = rotateTetro (fTetro game) (board game)}
 handleEvents _ gameState = return gameState
 
 -- | Function to update the game and step the game one iteration.
