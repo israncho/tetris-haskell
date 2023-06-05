@@ -1,6 +1,7 @@
 module Main where
 
 import Board (Board, Position, clearAllRows, completeRows, downMv, leftMv, rightMv)
+import Control.Monad (replicateM)
 import Drawing
 import Graphics.Gloss
   ( Display (InWindow),
@@ -41,10 +42,6 @@ data Game = Game
     board :: Board
   }
   deriving (Show, Eq)
-
-firstTetros = [newTetromino I, newTetromino O, newTetromino L]
-
-initialStateGame = Game {finished = False, fTetro = newTetromino I, board = [], nTetros = firstTetros}
 
 -- | Display of the tetris.
 tetrisDisplay :: Display
@@ -112,4 +109,8 @@ updateGame _ game
 
 -- | The main entry point of the Tetris game. It initializes the game state and starts the game loop.
 main :: IO ()
-main = playIO tetrisDisplay black 1 initialStateGame drawGame handleEvents updateGame
+main = do
+  firstTetro <- randomTetro
+  nextTetros <- replicateM 3 randomTetro
+  let initialStateGame = Game {finished = False, fTetro = firstTetro, board = [], nTetros = nextTetros}
+  playIO tetrisDisplay black 1 initialStateGame drawGame handleEvents updateGame
