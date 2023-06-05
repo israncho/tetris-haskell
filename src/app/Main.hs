@@ -1,6 +1,6 @@
 module Main where
 
-import Board (Board, Position, clearOneRow, completeRows, downMv, highestCompleteRow, leftMv, rightMv)
+import Board (Board, Position, clearAllRows, completeRows, downMv, leftMv, rightMv)
 import Drawing
 import Graphics.Gloss
   ( Display (InWindow),
@@ -78,19 +78,14 @@ lockAndSpawnTetromino game = do
     nextTetros = nTetros game
 
 clearRows :: Game -> Game
-clearRows game = if null cRows then game else game {board = clearOneRow numRow hCRow currBoard}
+clearRows game = game {board = clearAllRows cRows currBoard}
   where
     currBoard = board game
     cRows = completeRows currBoard
-    numRow = last cRows
-    hCRow = highestCompleteRow currBoard
 
 -- | Function to handle the inputs(events) of the user.
 handleEvents :: Event -> Game -> IO Game
-handleEvents (EventKey (Char 'q') _ _ _) game = do
-  print (highestCompleteRow $ board game)
-  print (completeRows $ board game)
-  exitSuccess
+handleEvents (EventKey (Char 'q') _ _ _) game = exitSuccess
 handleEvents (EventKey (Char 'j') Down _ _) game = performOneMove leftMv game
 handleEvents (EventKey (Char 'l') Down _ _) game = performOneMove rightMv game
 handleEvents (EventKey (Char 'k') Down _ _) game = performOneMove downMv game

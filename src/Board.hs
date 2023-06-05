@@ -54,6 +54,7 @@ highestCompleteRow board = foldr (\row list -> if null list then checkComplete r
 removeFrom :: [Cell] -> Board -> Board
 removeFrom cellsTD = foldr (\cell list -> if cell `elem` cellsTD then list else cell : list) []
 
+-- | Function to clear one row from a board given its row number and cells.
 clearOneRow :: Int -> [Cell] -> Board -> Board
 clearOneRow rowNum rowCells board = clearBoard
   where
@@ -66,3 +67,12 @@ clearOneRow rowNum rowCells board = clearBoard
               else cell
         )
         withoutRow
+
+-- | Function to clear all complete rows from a board given its row numbers.
+clearAllRows :: [Int] -> Board -> Board
+clearAllRows [] board = board
+clearAllRows rows board = clearAllRows (init rows) clearedBoard
+  where
+    rowToDelete = last rows
+    rowCells = highestCompleteRow board
+    clearedBoard = clearOneRow rowToDelete rowCells board
