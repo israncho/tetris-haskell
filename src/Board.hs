@@ -19,10 +19,11 @@ inBounds (x, y)
   | otherwise = True
 
 -- | Functions to move a position by one.
-downMv, leftMv, rightMv :: Position -> Position
+downMv, leftMv, rightMv, upMv :: Position -> Position
 downMv (x, y) = (x, y - 1)
 leftMv (x, y) = (x - 1, y)
 rightMv (x, y) = (x + 1, y)
+upMv (x, y) = (x, y + 1)
 
 -- | Function to rotate a position(point) around a pivot 90 degrees
 rotation :: Position -> Position -> Position

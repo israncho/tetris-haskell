@@ -1,6 +1,6 @@
 module Drawing where
 
-import Board (Board, Cell (cellColor, position))
+import Board (Board, Cell (cellColor, position), upMv)
 import Graphics.Gloss
 import Tetromino
 
@@ -94,6 +94,9 @@ drawBoard board = pictures $ boardBackground : map (\cell -> boardSquare square 
 
 -- | Function to draw the side panel of the game.
 drawSidePanel :: [Tetromino] -> Int -> Picture
-drawSidePanel (x : xs) _ = drawPanelTetro $ sidePanelTetro (name x) 
+drawSidePanel tetros _ = pictures $ map drawPanelTetro (mvUpPanelTetro panelTetros)
   where
     drawPanelTetro t = pictures $ map (\position -> squareOutsideBoard square position (tcolor t)) (tcells t)
+    panelTetros = map (sidePanelTetro . name) tetros
+    mvUpPanelTetro [] = []
+    mvUpPanelTetro (x : xs) = x : map (move upMv . move upMv . move upMv) (mvUpPanelTetro xs)
