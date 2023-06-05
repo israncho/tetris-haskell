@@ -5,10 +5,12 @@ import Graphics.Gloss
 import Tetromino
 
 -- | Constants for the display and drawing
-wWidth, wHeight, cellSize :: Int
-wWidth = 200
-wHeight = 400
-cellSize = 20
+boardWidth, boardHeight, cellSize, wHeight, wWidth :: Int
+boardWidth = 300
+boardHeight = 600
+cellSize = 30
+wHeight = boardHeight
+wWidth = boardWidth + (cellSize * 6)
 
 -- | Constants for the display and drawing
 halfWW, halfWH, cellSF, halfCSF :: Float
@@ -24,9 +26,9 @@ halfCSF = cellSF / 2
 -- | Lists of points to draw the grid of the board.
 basePoints, ceilPoints, leftPoints, rightPoints :: [(Float, Float)]
 basePoints = [(x * cellSF, 0) | x <- [0 .. 10]]
-ceilPoints = [(x * cellSF, fromIntegral wHeight) | x <- [0 .. 10]]
+ceilPoints = [(x * cellSF, fromIntegral boardHeight) | x <- [0 .. 10]]
 leftPoints = [(0, x * cellSF) | x <- [0 .. 20]]
-rightPoints = [(fromIntegral wWidth, x * cellSF) | x <- [0 .. 20]]
+rightPoints = [(fromIntegral boardWidth, x * cellSF) | x <- [0 .. 20]]
 
 -- | Take two lists of points and returns a list of paths.
 myZipp :: [(Float, Float)] -> [(Float, Float)] -> [[(Float, Float)]]
@@ -60,6 +62,12 @@ boardSquare drawingFunction (x, y) color
   | y < 0 || y > 19 = error "Square out of board"
   | otherwise = drawingFunction (fromIntegral x * cellSF, fromIntegral y * cellSF) color
 
+-- | Function to draw a square outside the board given the cell position, color and way to draw.
+squareOutsideBoard :: ((Float, Float) -> Color -> Picture) -> (Int, Int) -> Color -> Picture
+squareOutsideBoard drawingFunction (x, y) color
+  | 0 < x && x < 9 && 0 < y && y < 19 = error "Square inside the board"
+  | otherwise = drawingFunction (fromIntegral x * cellSF, fromIntegral y * cellSF) color
+
 -- | Returns the image of the tetromino to be drawn on the board.
 -- Second parameter for the type of the tetromino.
 drawTetromino :: Tetromino -> Bool -> Picture
@@ -75,3 +83,9 @@ squareWire (x, y) squcolr = translate (x + halfCSF) (y + halfCSF) $ color squcol
 -- | Function to draw the board in its current state. 
 drawBoard :: Board -> Picture
 drawBoard board = pictures $ map (\cell -> boardSquare square (position cell) (cellColor cell)) board
+
+sidePanelCoords :: [(Int, Int)]
+sidePanelCoords = [(x, y) | x <- [10..15], y <- [0..19]]
+
+drawSidePanel :: [Tetromino] -> Picture
+drawSidePanel _ = pictures $ map (\coord -> squareOutsideBoard square coord grey) sidePanelCoords
