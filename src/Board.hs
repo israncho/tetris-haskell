@@ -75,4 +75,8 @@ clearAllRows rows board = clearAllRows (init rows) clearedBoard
   where
     rowToDelete = last rows
     rowCells = highestCompleteRow board
-    clearedBoard = clearOneRow rowToDelete rowCells board
+    sameRow = foldr (\cell -> (&&) (rowToDelete == snd (position cell))) True rowCells
+    clearedBoard =
+      if sameRow
+        then clearOneRow rowToDelete rowCells board
+        else error "cell not in the row to delete"
