@@ -50,12 +50,11 @@ tetrisDisplay = InWindow "Tetris" (wWidth + 1, wHeight + 1) (200, 200)
 -- | Function to draw the entire game.
 drawGame :: Game -> IO Picture
 drawGame gameState =
-  return (translate (-halfWW) (-halfWH) (pictures [boardpic, ftetropic, ghostTetro, grid, sidePanelpic]))
+  return (translate (-halfWW) (-halfWH) (pictures [boardpic, ftetropic, ghostTetro, grid]))
   where
     currBoard = board gameState
     currTetro = fTetro gameState
     boardpic = drawBoard currBoard
-    sidePanelpic = drawSidePanel []
     ftetropic = drawTetromino currTetro False
     ghostTetro = drawTetromino (moveAllTheWay downMv currTetro currBoard) True
 
@@ -114,4 +113,4 @@ main = do
   firstTetro <- randomTetro
   nextTetros <- replicateM 3 randomTetro
   let initialStateGame = Game {finished = False, fTetro = firstTetro, board = [], nTetros = nextTetros}
-  playIO tetrisDisplay black 1 initialStateGame drawGame handleEvents updateGame
+  playIO tetrisDisplay grey 1 initialStateGame drawGame handleEvents updateGame

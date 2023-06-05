@@ -80,12 +80,18 @@ squareWire :: (Float, Float) -> Color -> Picture
 squareWire (x, y) squcolr = translate (x + halfCSF) (y + halfCSF) $ color squcolr (pictures 
   [rectangleWire (cellSF - 2) (cellSF - 2), rectangleWire (cellSF - 4) (cellSF - 4)])
 
--- | Function to draw the board in its current state. 
+-- | Squares of the background of the board.
+backgroundSquares :: [(Int, Int)]
+backgroundSquares = [(x, y) | x <- [0 .. 9], y <- [0 .. 19]]
+
+-- | Background of the board.
+boardBackground :: Picture
+boardBackground = pictures $ map (\coord -> boardSquare square coord black) backgroundSquares
+
+-- | Function to draw the board in its current state.
 drawBoard :: Board -> Picture
-drawBoard board = pictures $ map (\cell -> boardSquare square (position cell) (cellColor cell)) board
+drawBoard board = pictures $ boardBackground : map (\cell -> boardSquare square (position cell) (cellColor cell)) board
 
-sidePanelCoords :: [(Int, Int)]
-sidePanelCoords = [(x, y) | x <- [10..15], y <- [0..19]]
-
-drawSidePanel :: [Tetromino] -> Picture
-drawSidePanel _ = pictures $ map (\coord -> squareOutsideBoard square coord grey) sidePanelCoords
+-- | Function to draw the side panel of the game.
+drawSidePanel :: [Tetromino] -> Int -> Picture
+drawSidePanel _ = error "" 
