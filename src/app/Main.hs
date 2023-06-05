@@ -7,14 +7,13 @@ import Graphics.Gloss
     Picture,
     black,
     pictures,
-    red,
     translate,
   )
 import Graphics.Gloss.Interface.IO.Game
   ( Event (EventKey),
     Key (Char, SpecialKey),
     KeyState (Down, Up),
-    SpecialKey (KeyDown, KeyEsc, KeyLeft, KeyRight, KeySpace, KeyUp),
+    SpecialKey (KeyDown, KeyLeft, KeyRight, KeySpace, KeyUp),
     playIO,
   )
 import System.Exit (exitSuccess)
@@ -24,7 +23,6 @@ import Tetromino
     canMove,
     collision,
     getCells,
-    move,
     moveAllTheWay,
     moveTetromino,
     newTetromino,
