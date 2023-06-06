@@ -74,11 +74,14 @@ performOneMove direction game = return game {fTetro = movedTetro}
 lockSpawnTetro :: Game -> IO Game
 lockSpawnTetro game = do
   rndTetro <- randomTetro
-  return game {board = getCells currTetro ++ currBoard, fTetro = last nextTetros, upcomingTetros = rndTetro : init nextTetros}
+  return game {board = newBoard, fTetro = newFallingTetro, upcomingTetros = rndTetro : rTetros}
   where
     currTetro = fTetro game
     currBoard = board game
-    nextTetros = upcomingTetros game
+    uTetros = upcomingTetros game
+    newBoard = getCells currTetro ++ currBoard
+    newFallingTetro = last uTetros
+    rTetros = init uTetros
 
 -- | Clears all the complete rows in the game and
 -- updates the score.
