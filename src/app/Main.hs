@@ -88,7 +88,9 @@ clearRows game = game {board = clearAllRows cRows currBoard, score = newScore}
 
 -- | Function to handle the inputs(events) of the user.
 handleEvents :: Event -> Game -> IO Game
-handleEvents (EventKey (Char 'q') _ _ _) game = exitSuccess
+handleEvents (EventKey (Char 'q') _ _ _) game = do
+  putStrLn ("\nScore: " ++ show (score game))
+  exitSuccess
 handleEvents (EventKey (Char 'j') Down _ _) game = performOneMove leftMv game
 handleEvents (EventKey (Char 'l') Down _ _) game = performOneMove rightMv game
 handleEvents (EventKey (Char 'k') Down _ _) game = performOneMove downMv game
@@ -120,7 +122,9 @@ mvTetroFalling game
 updateGame :: Float -> Game -> IO Game
 updateGame _ game
   | canMove downMv currTetro currBoard = return $ mvTetroFalling game
-  | collision nextTetro currBoard = exitSuccess
+  | collision nextTetro currBoard = do
+      putStrLn ("\nScore: " ++ show (score game))
+      exitSuccess
   | canIterate = do
       currGame <- lockSpawnTetro game
       return $ (clearRows currGame) {updateCount = 0}
