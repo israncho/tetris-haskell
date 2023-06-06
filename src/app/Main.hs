@@ -100,14 +100,14 @@ handleEvents _ gameState = return gameState
 updateGame :: Float -> Game -> IO Game
 updateGame _ game
   | canMove downMv currTetro currBoard = return game {fTetro = moveTetromino downMv currTetro currBoard}
-  | not $ collision (last nextTetros) currBoard = do
+  | collision nextTetro currBoard || not (canMove downMv nextTetro currBoard) = exitSuccess
+  | otherwise = do
       currGame <- lockAndSpawnTetromino game
       return $ clearRows currGame
-  | otherwise = exitSuccess
   where
     currTetro = fTetro game
     currBoard = board game
-    nextTetros = nTetros game
+    nextTetro = last (nTetros game)
 
 -- | The main entry point of the Tetris game. It initializes the game state and starts the game loop.
 main :: IO ()
