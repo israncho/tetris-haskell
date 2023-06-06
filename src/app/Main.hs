@@ -101,17 +101,17 @@ handleEvents :: Event -> Game -> IO Game
 handleEvents (EventKey (Char 'q') _ _ _) game = do
   putStrLn ("\nScore: " ++ show (score game))
   exitSuccess
+handleEvents (EventKey (Char 'i') Down _ _) game = performRotation game
 handleEvents (EventKey (Char 'j') Down _ _) game = performOneMove leftMv game
 handleEvents (EventKey (Char 'l') Down _ _) game = performOneMove rightMv game
 handleEvents (EventKey (Char 'k') Down _ _) game = performOneMove downMv game
+handleEvents (EventKey (SpecialKey KeyUp) Down _ _) game = performRotation game
 handleEvents (EventKey (SpecialKey KeyLeft) Down _ _) game = performOneMove leftMv game
 handleEvents (EventKey (SpecialKey KeyRight) Down _ _) game = performOneMove rightMv game
 handleEvents (EventKey (SpecialKey KeyDown) Down _ _) game = performOneMove downMv game
 handleEvents (EventKey (SpecialKey KeySpace) Down _ _) game = do
   currGame <- lockSpawnTetro game {fTetro = moveAllTheWay downMv (fTetro game) (board game)}
   return $ (clearRows currGame) {updateCount = 0}
-handleEvents (EventKey (Char 'i') Down _ _) game = performRotation game
-handleEvents (EventKey (SpecialKey KeyUp) Down _ _) game = performRotation game
 handleEvents _ gameState = return gameState
 
 -- | Function move down the falling tetromino.
