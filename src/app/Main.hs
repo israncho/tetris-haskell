@@ -32,14 +32,14 @@ import Tetromino
   )
 
 data Game = Game
-  { -- | Boolean to know if the game has ended
-    finished :: Bool,
-    -- | Falling tetromino.
+  { -- | Falling tetromino.
     fTetro :: Tetromino,
     -- | Next tetrominos
     nTetros :: [Tetromino],
     -- | Board of the game.
-    board :: Board
+    board :: Board,
+    -- | Score, number of cleared rows
+    score :: Int
   }
   deriving (Show, Eq)
 
@@ -55,7 +55,7 @@ drawGame gameState =
     currBoard = board gameState
     currTetro = fTetro gameState
     boardpic = drawBoard currBoard
-    sidePanelPic = drawSidePanel (nTetros gameState) 0
+    sidePanelPic = drawSidePanel (nTetros gameState) (score gameState)
     ftetropic = drawTetromino currTetro False
     ghostTetro = drawTetromino (moveAllTheWay downMv currTetro currBoard) True
 
@@ -74,10 +74,11 @@ lockAndSpawnTetromino game = do
     nextTetros = nTetros game
 
 clearRows :: Game -> Game
-clearRows game = game {board = clearAllRows cRows currBoard}
+clearRows game = game {board = clearAllRows cRows currBoard, score = newScore}
   where
     currBoard = board game
     cRows = completeRows currBoard
+    newScore = score game + length cRows
 
 -- | Function to handle the inputs(events) of the user.
 handleEvents :: Event -> Game -> IO Game
@@ -113,5 +114,5 @@ main :: IO ()
 main = do
   firstTetro <- randomTetro
   nextTetros <- replicateM 3 randomTetro
-  let initialStateGame = Game {finished = False, fTetro = firstTetro, board = [], nTetros = nextTetros}
+  let initialStateGame = Game {fTetro = firstTetro, board = [], nTetros = nextTetros, score = 0}
   playIO tetrisDisplay grey 1 initialStateGame drawGame handleEvents updateGame
