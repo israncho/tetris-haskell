@@ -98,12 +98,16 @@ rotateTetro tetro board
   | canRotate oneLeft board = rotateTCells oneLeft
   | canRotate twoRight board = rotateTCells twoRight
   | canRotate twoLeft board = rotateTCells twoLeft
+  | canRotate oneDown board = rotateTCells oneDown
+  | canRotate twoDown board = rotateTCells twoDown
   | otherwise = tetro
   where
     oneRight = move rightMv tetro
     twoRight = move rightMv oneRight
     oneLeft = move leftMv tetro
     twoLeft = move leftMv oneLeft
+    oneDown = move downMv tetro
+    twoDown = move downMv oneDown 
 
 -- | Returns a tetromino in the bottom position of the side panel
 sidePanelTetro :: Name -> Tetromino
