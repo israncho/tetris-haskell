@@ -67,7 +67,7 @@ drawGame gameState =
 -- | Function to make the falling tetromino move.
 performOneMove :: (Position -> Position) -> Game -> IO Game
 performOneMove direction game = return game {fTetro = movedTetro}
-  where  
+  where
     movedTetro = moveTetromino direction (fTetro game) (board game)
 
 -- | Locks the current tetromino and spawns another one.
@@ -110,21 +110,18 @@ handleEvents _ gameState = return gameState
 -- | Function move down the falling tetromino.
 -- Returns the game with the tetromino falling one
 -- position down if it is time to iterate the game
-mvTetroFalling :: Game -> Game
+mvTetroFalling :: Game -> IO Game
 mvTetroFalling game
-  | canIterate = game {fTetro = movedTetro, updateCount = 0}
-  | otherwise = game {updateCount = updatecnt + 1}
+  | canIterate = performOneMove downMv (game {updateCount = 0})
+  | otherwise = return game {updateCount = updatecnt + 1}
   where
     updatecnt = updateCount game
     canIterate = updatecnt >= updatesToIterate game
-    currTetro = fTetro game
-    currBoard = board game
-    movedTetro = moveTetromino downMv currTetro currBoard
 
 -- | Function to update the game and step the game one iteration.
 updateGame :: Float -> Game -> IO Game
 updateGame _ game
-  | canMove downMv currTetro currBoard = return $ mvTetroFalling game
+  | canMove downMv currTetro currBoard = mvTetroFalling game
   | collision nextTetro currBoard = do
       putStrLn ("\nScore: " ++ show (score game))
       exitSuccess
