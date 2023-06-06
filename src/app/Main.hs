@@ -42,7 +42,7 @@ data Game = Game
     score :: Int,
     -- | Updates made in one iteration of the game.
     updateCount :: Int,
-    -- | Number of updates needed to iterate the game. 
+    -- | Number of updates needed to iterate the game.
     updatesToIterate :: Int
   }
   deriving (Show, Eq)
@@ -77,6 +77,8 @@ lockSpawnTetro game = do
     currBoard = board game
     nextTetros = nTetros game
 
+-- | Clears all the complete rows in the game and
+-- updates the score.
 clearRows :: Game -> Game
 clearRows game = game {board = clearAllRows cRows currBoard, score = newScore}
   where
@@ -94,14 +96,17 @@ handleEvents (EventKey (SpecialKey KeyLeft) Down _ _) game = performOneMove left
 handleEvents (EventKey (SpecialKey KeyRight) Down _ _) game = performOneMove rightMv game
 handleEvents (EventKey (SpecialKey KeyDown) Down _ _) game = performOneMove downMv game
 handleEvents (EventKey (SpecialKey KeySpace) Down _ _) game = do
-  currGame <- lockSpawnTetro game {fTetro = moveAllTheWay downMv (fTetro game) (board game), updateCount = 0}
-  return $ clearRows currGame
+  currGame <- lockSpawnTetro game {fTetro = moveAllTheWay downMv (fTetro game) (board game)}
+  return $ (clearRows currGame) {updateCount = 0}
 handleEvents (EventKey (Char 'i') Down _ _) game = return game {fTetro = rotateTetro (fTetro game) (board game)}
 handleEvents (EventKey (SpecialKey KeyUp) Down _ _) game = return game {fTetro = rotateTetro (fTetro game) (board game)}
 handleEvents _ gameState = return gameState
 
+-- | Function move down the falling tetromino.
+-- Returns the game with the tetromino falling one
+-- position down if it is time to iterate the game
 mvTetroFalling :: Game -> Game
-mvTetroFalling game 
+mvTetroFalling game
   | canIterate = game {fTetro = movedTetro, updateCount = 0}
   | otherwise = game {updateCount = updatecnt + 1}
   where
@@ -114,7 +119,7 @@ mvTetroFalling game
 -- | Function to update the game and step the game one iteration.
 updateGame :: Float -> Game -> IO Game
 updateGame _ game
-  | canMove downMv currTetro currBoard = return $ mvTetroFalling game 
+  | canMove downMv currTetro currBoard = return $ mvTetroFalling game
   | collision nextTetro currBoard = exitSuccess
   | canIterate = do
       currGame <- lockSpawnTetro game
@@ -125,7 +130,7 @@ updateGame _ game
     currBoard = board game
     nextTetro = last (nTetros game)
     updatecnt = updateCount game
-    canIterate = updatecnt >= updatesToIterate game 
+    canIterate = updatecnt >= updatesToIterate game
 
 -- | The main entry point of the Tetris game. It initializes the game state and starts the game loop.
 main :: IO ()
