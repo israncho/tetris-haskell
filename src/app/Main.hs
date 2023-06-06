@@ -42,8 +42,8 @@ data Game = Game
     score :: Int,
     -- | Updates made in one iteration of the game.
     updateCount :: Int,
-    -- | iteration to take action.
-    itAction :: Int
+    -- | Number of updates needed to iterate the game. 
+    updatesToIterate :: Int
   }
   deriving (Show, Eq)
 
@@ -102,11 +102,11 @@ handleEvents _ gameState = return gameState
 
 mvTetroFalling :: Game -> Game
 mvTetroFalling game 
-  | ucount >= itActi = game {fTetro = movedTetro, updateCount = 0}
-  | otherwise = game {updateCount = ucount + 1}
+  | canIterate = game {fTetro = movedTetro, updateCount = 0}
+  | otherwise = game {updateCount = updatecnt + 1}
   where
-    ucount = updateCount game
-    itActi = itAction game
+    updatecnt = updateCount game
+    canIterate = updatecnt >= updatesToIterate game
     currTetro = fTetro game
     currBoard = board game
     movedTetro = moveTetromino downMv currTetro currBoard
@@ -116,16 +116,16 @@ updateGame :: Float -> Game -> IO Game
 updateGame _ game
   | canMove downMv currTetro currBoard = return $ mvTetroFalling game 
   | collision nextTetro currBoard = exitSuccess
-  | ucount >= itActi = do
+  | canIterate = do
       currGame <- lockSpawnTetro game
       return $ (clearRows currGame) {updateCount = 0}
-  | otherwise = return game {updateCount = ucount + 1}
+  | otherwise = return game {updateCount = updatecnt + 1}
   where
     currTetro = fTetro game
     currBoard = board game
     nextTetro = last (nTetros game)
-    ucount = updateCount game
-    itActi = itAction game
+    updatecnt = updateCount game
+    canIterate = updatecnt >= updatesToIterate game 
 
 -- | The main entry point of the Tetris game. It initializes the game state and starts the game loop.
 main :: IO ()
@@ -139,6 +139,6 @@ main = do
             nTetros = nextTetros,
             score = 0,
             updateCount = 0,
-            itAction = 30
+            updatesToIterate = 30
           }
   playIO tetrisDisplay grey 30 initialStateGame drawGame handleEvents updateGame
