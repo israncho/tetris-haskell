@@ -54,14 +54,15 @@ tetrisDisplay = InWindow "Tetris" (wWidth + 1, wHeight + 1) (200, 200)
 -- | Function to draw the entire game.
 drawGame :: Game -> IO Picture
 drawGame gameState =
-  return (translate (-halfWW) (-halfWH) (pictures [boardpic, ftetropic, ghostTetro, grid, sidePanelPic]))
+  return (translate (-halfWW) (-halfWH) gamePic)
   where
     currBoard = board gameState
     currTetro = fTetro gameState
-    boardpic = drawBoard currBoard
-    sidePanelPic = drawSidePanel (nTetros gameState) (score gameState)
-    ftetropic = drawTetromino currTetro False
-    ghostTetro = drawTetromino (moveAllTheWay downMv currTetro currBoard) True
+    boardPic = drawBoard currBoard
+    fTetroPic = drawTetromino currTetro False
+    gTetroPic = drawTetromino (moveAllTheWay downMv currTetro currBoard) True
+    sidePanel = drawSidePanel (nTetros gameState) (score gameState)
+    gamePic = pictures [boardPic, fTetroPic, gTetroPic, grid, sidePanel]
 
 -- | Function to make the falling tetromino move.
 performOneMove :: (Position -> Position) -> Game -> IO Game
