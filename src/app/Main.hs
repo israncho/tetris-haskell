@@ -39,7 +39,11 @@ data Game = Game
     -- | Board of the game.
     board :: Board,
     -- | Score, number of cleared rows
-    score :: Int
+    score :: Int,
+    -- | Updates made
+    updateCount :: Int,
+    -- | iteration to take action.
+    itAction :: Int
   }
   deriving (Show, Eq)
 
@@ -96,10 +100,21 @@ handleEvents (EventKey (Char 'i') Down _ _) game = return game {fTetro = rotateT
 handleEvents (EventKey (SpecialKey KeyUp) Down _ _) game = return game {fTetro = rotateTetro (fTetro game) (board game)}
 handleEvents _ gameState = return gameState
 
+mvTetroFalling :: Game -> Game
+mvTetroFalling game 
+  | updateCount game == itAction game = game {fTetro = movedTetro, updateCount = 0}
+  | otherwise = game {updateCount = ucount + 1}
+  where
+    ucount = updateCount game
+    itActi = itAction game
+    currTetro = fTetro game
+    currBoard = board game
+    movedTetro = moveTetromino downMv currTetro currBoard
+
 -- | Function to update the game and step the game one iteration.
 updateGame :: Float -> Game -> IO Game
 updateGame _ game
-  | canMove downMv currTetro currBoard = return game {fTetro = moveTetromino downMv currTetro currBoard}
+  | canMove downMv currTetro currBoard = return $ mvTetroFalling game 
   | collision nextTetro currBoard || not (canMove downMv nextTetro currBoard) = exitSuccess
   | otherwise = do
       currGame <- lockAndSpawnTetromino game
@@ -114,5 +129,13 @@ main :: IO ()
 main = do
   firstTetro <- randomTetro
   nextTetros <- replicateM 3 randomTetro
-  let initialStateGame = Game {fTetro = firstTetro, board = [], nTetros = nextTetros, score = 0}
-  playIO tetrisDisplay grey 1 initialStateGame drawGame handleEvents updateGame
+  let initialStateGame =
+        Game
+          { fTetro = firstTetro,
+            board = [],
+            nTetros = nextTetros,
+            score = 0,
+            updateCount = 0,
+            itAction = 30
+          }
+  playIO tetrisDisplay grey 30 initialStateGame drawGame handleEvents updateGame
