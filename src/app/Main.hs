@@ -68,8 +68,8 @@ performOneMove :: (Position -> Position) -> Game -> IO Game
 performOneMove direction game = return game {fTetro = moveTetromino direction (fTetro game) (board game)}
 
 -- | Locks the current tetromino and spawns another one.
-lockAndSpawnTetromino :: Game -> IO Game
-lockAndSpawnTetromino game = do
+lockSpawnTetro :: Game -> IO Game
+lockSpawnTetro game = do
   rndTetro <- randomTetro
   return game {board = getCells currTetro ++ currBoard, fTetro = last nextTetros, nTetros = rndTetro : init nextTetros}
   where
@@ -94,7 +94,7 @@ handleEvents (EventKey (SpecialKey KeyLeft) Down _ _) game = performOneMove left
 handleEvents (EventKey (SpecialKey KeyRight) Down _ _) game = performOneMove rightMv game
 handleEvents (EventKey (SpecialKey KeyDown) Down _ _) game = performOneMove downMv game
 handleEvents (EventKey (SpecialKey KeySpace) Down _ _) game = do
-  currGame <- lockAndSpawnTetromino game {fTetro = moveAllTheWay downMv (fTetro game) (board game)}
+  currGame <- lockSpawnTetro game {fTetro = moveAllTheWay downMv (fTetro game) (board game), updateCount = 0}
   return $ clearRows currGame
 handleEvents (EventKey (Char 'i') Down _ _) game = return game {fTetro = rotateTetro (fTetro game) (board game)}
 handleEvents (EventKey (SpecialKey KeyUp) Down _ _) game = return game {fTetro = rotateTetro (fTetro game) (board game)}
@@ -117,7 +117,7 @@ updateGame _ game
   | canMove downMv currTetro currBoard = return $ mvTetroFalling game 
   | collision nextTetro currBoard || not (canMove downMv nextTetro currBoard) = exitSuccess
   | otherwise = do
-      currGame <- lockAndSpawnTetromino game
+      currGame <- lockSpawnTetro game
       return $ clearRows currGame
   where
     currTetro = fTetro game
