@@ -100,10 +100,23 @@ drawPanelTetros tetros = pictures $ map drawOnePanelTetro (mvUpPanelTetro panelT
     panelTetros = map (sidePanelTetro . name) tetros
     mvUpPanelTetro [] = []
     mvUpPanelTetro (x : xs) = x : map (move upMv . move upMv . move upMv) (mvUpPanelTetro xs)
+  
+panelBasePoints, panelCeilPoints, panelleftPoints, panelrightPoints :: [(Float, Float)]
+panelBasePoints = [(x * cellSF, 1 * cellSF) | x <- [12 .. 16]]
+panelCeilPoints = [(x * cellSF, 11 * cellSF) | x <- [12 .. 16]]
+panelleftPoints = [(11 * cellSF, y * cellSF) | y <- [2 .. 11]]
+panelrightPoints = [(17 * cellSF, y * cellSF) | y <- [2 .. 11]]
+
+panelVLines, panelHLines :: [[(Float, Float)]]
+panelVLines = myZipp panelBasePoints panelCeilPoints 
+panelHLines = myZipp panelleftPoints panelrightPoints 
+
+panelGrid :: Picture
+panelGrid = pictures $ drawGrid (panelVLines ++ panelHLines)
 
 -- | Function to draw the side panel of the game.
 drawSidePanel :: [Tetromino] -> Int -> Picture
-drawSidePanel tetros _ = pictures [panelTetroBackground, panelTetroPic]
+drawSidePanel tetros _ = pictures [panelTetroBackground, panelTetroPic, panelGrid]
   where
     blackSqrCoords = [(x, y) | x <- [11 .. 16], y <- [1 .. 10]]
     panelTetroBackground = pictures $ map (\coord -> squareOutsideBoard square coord black) blackSqrCoords
