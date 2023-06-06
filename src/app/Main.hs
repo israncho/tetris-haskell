@@ -35,7 +35,7 @@ data Game = Game
   { -- | Falling tetromino.
     fTetro :: Tetromino,
     -- | Next tetrominos
-    nTetros :: [Tetromino],
+    upcomingTetros :: [Tetromino],
     -- | Board of the game.
     board :: Board,
     -- | Score, number of cleared rows
@@ -61,7 +61,7 @@ drawGame gameState =
     boardPic = drawBoard currBoard
     fTetroPic = drawTetromino currTetro False
     gTetroPic = drawTetromino (moveAllTheWay downMv currTetro currBoard) True
-    sidePanel = drawSidePanel (nTetros gameState) (score gameState)
+    sidePanel = drawSidePanel (upcomingTetros gameState) (score gameState)
     gamePic = pictures [boardPic, fTetroPic, gTetroPic, grid, sidePanel]
 
 -- | Function to make the falling tetromino move.
@@ -74,11 +74,11 @@ performOneMove direction game = return game {fTetro = movedTetro}
 lockSpawnTetro :: Game -> IO Game
 lockSpawnTetro game = do
   rndTetro <- randomTetro
-  return game {board = getCells currTetro ++ currBoard, fTetro = last nextTetros, nTetros = rndTetro : init nextTetros}
+  return game {board = getCells currTetro ++ currBoard, fTetro = last nextTetros, upcomingTetros = rndTetro : init nextTetros}
   where
     currTetro = fTetro game
     currBoard = board game
-    nextTetros = nTetros game
+    nextTetros = upcomingTetros game
 
 -- | Clears all the complete rows in the game and
 -- updates the score.
@@ -132,7 +132,7 @@ updateGame _ game
   where
     currTetro = fTetro game
     currBoard = board game
-    nextTetro = last (nTetros game)
+    nextTetro = last (upcomingTetros game)
     updatecnt = updateCount game
     canIterate = updatecnt >= updatesToIterate game
 
@@ -145,7 +145,7 @@ main = do
         Game
           { fTetro = firstTetro,
             board = [],
-            nTetros = nextTetros,
+            upcomingTetros = nextTetros,
             score = 0,
             updateCount = 0,
             updatesToIterate = 30
