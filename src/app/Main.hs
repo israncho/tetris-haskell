@@ -115,7 +115,7 @@ mvTetroFalling game
 updateGame :: Float -> Game -> IO Game
 updateGame _ game
   | canMove downMv currTetro currBoard = return $ mvTetroFalling game 
-  | collision nextTetro currBoard || not (canMove downMv nextTetro currBoard) = exitSuccess
+  | collision nextTetro currBoard = exitSuccess
   | ucount == itActi = do
       currGame <- lockSpawnTetro game
       return $ (clearRows currGame) {updateCount = 0}
