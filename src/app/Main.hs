@@ -40,7 +40,7 @@ data Game = Game
     board :: Board,
     -- | Score, number of cleared rows
     score :: Int,
-    -- | Updates made
+    -- | Updates made in one iteration of the game.
     updateCount :: Int,
     -- | iteration to take action.
     itAction :: Int
@@ -102,7 +102,7 @@ handleEvents _ gameState = return gameState
 
 mvTetroFalling :: Game -> Game
 mvTetroFalling game 
-  | updateCount game == itAction game = game {fTetro = movedTetro, updateCount = 0}
+  | ucount >= itActi = game {fTetro = movedTetro, updateCount = 0}
   | otherwise = game {updateCount = ucount + 1}
   where
     ucount = updateCount game
@@ -116,7 +116,7 @@ updateGame :: Float -> Game -> IO Game
 updateGame _ game
   | canMove downMv currTetro currBoard = return $ mvTetroFalling game 
   | collision nextTetro currBoard = exitSuccess
-  | ucount == itActi = do
+  | ucount >= itActi = do
       currGame <- lockSpawnTetro game
       return $ (clearRows currGame) {updateCount = 0}
   | otherwise = return game {updateCount = ucount + 1}
