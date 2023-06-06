@@ -66,7 +66,9 @@ drawGame gameState =
 
 -- | Function to make the falling tetromino move.
 performOneMove :: (Position -> Position) -> Game -> IO Game
-performOneMove direction game = return game {fTetro = moveTetromino direction (fTetro game) (board game)}
+performOneMove direction game = return game {fTetro = movedTetro}
+  where  
+    movedTetro = moveTetromino direction (fTetro game) (board game)
 
 -- | Locks the current tetromino and spawns another one.
 lockSpawnTetro :: Game -> IO Game
