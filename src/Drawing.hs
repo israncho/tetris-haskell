@@ -92,11 +92,19 @@ boardBackground = pictures $ map (\coord -> boardSquare square coord black) back
 drawBoard :: Board -> Picture
 drawBoard board = pictures $ boardBackground : map (\cell -> boardSquare square (position cell) (cellColor cell)) board
 
--- | Function to draw the side panel of the game.
-drawSidePanel :: [Tetromino] -> Int -> Picture
-drawSidePanel tetros _ = pictures $ map drawPanelTetro (mvUpPanelTetro panelTetros)
+-- | Function to draw the following tetrominos that are in the side panel.
+drawPanelTetros :: [Tetromino] -> Picture
+drawPanelTetros tetros = pictures $ map drawOnePanelTetro (mvUpPanelTetro panelTetros)
   where
-    drawPanelTetro t = pictures $ map (\position -> squareOutsideBoard square position (tcolor t)) (tcells t)
+    drawOnePanelTetro t = pictures $ map (\position -> squareOutsideBoard square position (tcolor t)) (tcells t)
     panelTetros = map (sidePanelTetro . name) tetros
     mvUpPanelTetro [] = []
     mvUpPanelTetro (x : xs) = x : map (move upMv . move upMv . move upMv) (mvUpPanelTetro xs)
+
+-- | Function to draw the side panel of the game.
+drawSidePanel :: [Tetromino] -> Int -> Picture
+drawSidePanel tetros _ = pictures [panelTetroBackground, panelTetroPic]
+  where
+    blackSqrCoords = [(x, y) | x <- [11 .. 16], y <- [1 .. 10]]
+    panelTetroBackground = pictures $ map (\coord -> squareOutsideBoard square coord black) blackSqrCoords
+    panelTetroPic = drawPanelTetros tetros 
