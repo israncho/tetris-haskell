@@ -34,11 +34,11 @@ import Tetromino
 data Game = Game
   { -- | Falling tetromino.
     fTetro :: Tetromino,
-    -- | Next tetrominos
+    -- | Upcoming tetrominos.
     upcomingTetros :: [Tetromino],
     -- | Board of the game.
     board :: Board,
-    -- | Score, number of cleared rows
+    -- | Score, number of cleared rows.
     score :: Int,
     -- | Updates made in one iteration of the game.
     updateCount :: Int,
@@ -69,6 +69,10 @@ performOneMove :: (Position -> Position) -> Game -> IO Game
 performOneMove direction game = return game {fTetro = movedTetro}
   where
     movedTetro = moveTetromino direction (fTetro game) (board game)
+
+-- | Function to make the falling tetromino rotate.
+performRotation :: Game -> IO Game
+performRotation game = return game {fTetro = rotateTetro (fTetro game) (board game)}
 
 -- | Locks the current tetromino and spawns another one.
 lockSpawnTetro :: Game -> IO Game
@@ -106,8 +110,8 @@ handleEvents (EventKey (SpecialKey KeyDown) Down _ _) game = performOneMove down
 handleEvents (EventKey (SpecialKey KeySpace) Down _ _) game = do
   currGame <- lockSpawnTetro game {fTetro = moveAllTheWay downMv (fTetro game) (board game)}
   return $ (clearRows currGame) {updateCount = 0}
-handleEvents (EventKey (Char 'i') Down _ _) game = return game {fTetro = rotateTetro (fTetro game) (board game)}
-handleEvents (EventKey (SpecialKey KeyUp) Down _ _) game = return game {fTetro = rotateTetro (fTetro game) (board game)}
+handleEvents (EventKey (Char 'i') Down _ _) game = performRotation game
+handleEvents (EventKey (SpecialKey KeyUp) Down _ _) game = performRotation game
 handleEvents _ gameState = return gameState
 
 -- | Function move down the falling tetromino.
