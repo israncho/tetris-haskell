@@ -101,16 +101,19 @@ drawPanelTetros tetros = pictures $ map drawOnePanelTetro (mvUpPanelTetro panelT
     mvUpPanelTetro [] = []
     mvUpPanelTetro (x : xs) = x : map (move upMv . move upMv . move upMv) (mvUpPanelTetro xs)
   
+-- | Lists of points to draw the grid of the side panel.
 panelBasePoints, panelCeilPoints, panelleftPoints, panelrightPoints :: [(Float, Float)]
 panelBasePoints = [(x * cellSF, 1 * cellSF) | x <- [12 .. 16]]
 panelCeilPoints = [(x * cellSF, 11 * cellSF) | x <- [12 .. 16]]
 panelleftPoints = [(11 * cellSF, y * cellSF) | y <- [2 .. 11]]
 panelrightPoints = [(17 * cellSF, y * cellSF) | y <- [2 .. 11]]
 
+-- | Lists of paths to draw the grid of the side panel.
 panelVLines, panelHLines :: [[(Float, Float)]]
 panelVLines = myZipp panelBasePoints panelCeilPoints 
 panelHLines = myZipp panelleftPoints panelrightPoints 
 
+-- | Side panel grid picture
 panelGrid :: Picture
 panelGrid = pictures $ drawGrid (panelVLines ++ panelHLines)
 

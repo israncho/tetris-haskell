@@ -105,6 +105,7 @@ rotateTetro tetro board
     oneLeft = move leftMv tetro
     twoLeft = move leftMv oneLeft
 
+-- | Returns a tetromino in the bottom position of the side panel
 sidePanelTetro :: Name -> Tetromino
 sidePanelTetro I = Tetromino I cyan [(12, 2), (13, 2), (14, 2), (15, 2)]
 sidePanelTetro O = Tetromino O yellow [(13, 3), (13, 2), (14, 2), (14, 3)]
