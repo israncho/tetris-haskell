@@ -120,7 +120,7 @@ panelGrid = pictures $ drawGrid (panelVLines ++ panelHLines)
 -- | Function to draw the side panel of the game.
 drawSidePanel :: [Tetromino] -> Int -> Picture
 drawSidePanel tetros score = pictures [panelTetroBackground, panelTetroPic, panelGrid, 
-  t1, t2, t3, t4, t5, t6, t7]
+  t1, t2, t3, t4, t5, t6, t7, t8]
   where
     blackSqrCoords = [(x, y) | x <- [11 .. 16], y <- [1 .. 10]]
     panelTetroBackground = pictures $ map (\coord -> squareOutsideBoard square coord black) blackSqrCoords
@@ -134,3 +134,4 @@ drawSidePanel tetros score = pictures [panelTetroBackground, panelTetroPic, pane
     t5 = panelText "Right: L" 16
     t6 = panelText "down: K" 15
     t7 = panelText "rotate: I" 14
+    t8 = panelText "quit: Q" 13
