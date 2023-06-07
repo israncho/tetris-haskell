@@ -90,7 +90,7 @@ canRotate tetro board = allInBounds rotatedTetro && not (collision rotatedTetro 
   where
     rotatedTetro = rotateTCells tetro
 
--- | Function to rotate a tetromino in the given board.
+-- | Function to rotate a tetromino in the given board if it's possible.
 rotateTetro :: Tetromino -> Board -> Tetromino
 rotateTetro tetro board
   | canRotate tetro board = rotateTCells tetro

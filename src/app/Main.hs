@@ -143,7 +143,8 @@ updateGame _ game
     updatecnt = updateCount game
     canIterate = updatecnt >= updatesToIterate game
 
--- | The main entry point of the Tetris game. It initializes the game state and starts the game loop.
+-- | The main entry point of the Tetris game. 
+-- It initializes the game state and starts the game loop.
 main :: IO ()
 main = do
   firstTetro <- randomTetro
